@@ -1,35 +1,21 @@
-from collections import defaultdict, Counter
-from pprint      import pprint
-from copy        import deepcopy
-
-from node import Node
-
+from collections import defaultdict
 from database import DataBase
 
 class KnowledgeMap():
     
     def __init__(self):
         self.database = DataBase()
+        self.extra    = defaultdict(lambda : defaultdict(set))
 
-    def add(self, t):
-        '''
-        Add a piece of knowledge to the network
-
-        Each piece of knowledge might have conditions and causes
-        Conditions rely on states of instance objects
-        '''
+    def add(self, t, **kwargs):
         self.database.add(t)
-
-    def add_str(self, s):
-        t = tuple(s.split(' '))
-        self.add(t)
+        for k, v in kwargs.items():
+            self.extra[t][k] = v
 
     def get(self, t):
-        return self.database.get(t)
-
-    def get_str(self, s):
-        t = tuple(s.split(' '))
-        return self.get(t)
+        matches = self.database.get(t)
+        matches = [(m, self.extra[m]) for m in matches]
+        return matches
 
 
 
