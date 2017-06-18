@@ -1,31 +1,23 @@
 #!/usr/bin/env python3
 from kmap import KnowledgeMap
 
-def common_sense():
-    '''
-    Why can you pull something with a string but not push it?
-
-    Obviously a work in progress
-    '''
+def cup():
     kmap = KnowledgeMap()
-    kmap.add('string can force-transfer', **{'conditions':{'string is taut'}})
-    kmap.add('lever can force-transfer',  **{'causes':{'lever is solid'}})
-
-    print(kmap.get('* can force-transfer'))
-
-    check_condition = kmap.create_extra_checker('conditions', 'query')
-
-    print(kmap.query('string can force-transfer', check_condition))
-    kmap.add('string is taut')
-    print(kmap.query('string can force-transfer', check_condition))
-
-def syllogism():
-    kmap = KnowledgeMap()
-    kmap.add('socrates isa man')
-    kmap.add('man is mortal')
-    kmap.infer()
-    print(kmap.query('socrates is mortal'))
+    kmap.add('brick is stable', **{'causes':{'brick hasa flatbottom'}})
+    kmap.add('brick is heavy')
+    kmap.add('glass enables drinking', **{'causes':{'glass hasa handle', 'glass carries liquid'}})
+    kmap.add('glass is pretty')
+    kmap.add('briefcase is liftable', **{'causes' : {'briefcase has handle', 'briefcase is light'}})
+    kmap.add('briefcase is useful', **{'causes' : {'briefcase holds papers'}})
+    kmap.add('briefcase enables organization', **{'causes' : {'briefcase holds papers'}})
+    kmap.add('bowl carries liquid', **{'causes' : {'bowl hasa concavity'}})
+    kmap.add('bowl contains cherry-soup')
+    kmap.add('cup is stable')
+    kmap.add('cup enables drinking')
+    kmap.add('mystery-object madeof porcelain')
+    kmap.add('mystery-object hasa decoration')
+    kmap.add('mystery-object hasa concavity')
+    print(kmap)
 
 if __name__ == '__main__':
-    #common_sense()
-    syllogism()
+    cup()

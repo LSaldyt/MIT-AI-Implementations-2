@@ -4,6 +4,12 @@ class Node(object):
     def __init__(self, item):
         self.item = item
 
+    def __str__(self):
+        return str(self.item)
+
+    def __repr__(self):
+        return str(self)
+
     def __getattr__(self, attr):
         return getattr(self.item, attr)
 
@@ -12,7 +18,7 @@ class DataBase(object):
         self.dictionaries = []
 
     def __str__(self):
-        return '\n'.join(str(d) for d in self.dictionaries)
+        return '\n'.join(str(node) for node in self.dictionaries[0].values())
 
     def __contains__(self, other):
         return len(self.get(other)) > 0

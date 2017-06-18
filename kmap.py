@@ -8,6 +8,9 @@ class KnowledgeMap(object):
         self.database = DataBase()
         self.extra    = defaultdict(lambda : defaultdict(set))
 
+    def __str__(self):
+        return str(self.database)
+
     def add(self, t, **kwargs):
         t = to_clause(t)
         self.database.add(t)
@@ -20,6 +23,17 @@ class KnowledgeMap(object):
         matches = self.database.get(t)
         matches = [(m, self.extra[m]) for m in matches]
         return matches
+
+    def pretty_get(self, t):
+        print(t)
+        print('_' * 47)
+        matches = self.get(t)
+        for match, extra in matches:
+            print(match)
+            if len(extra) > 0:
+                print(extra)
+        print('_' * 47)
+                
 
     def inherit(self):
         for clause, extra in self.get('* isa *'):
