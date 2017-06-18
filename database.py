@@ -14,6 +14,9 @@ class DataBase(object):
     def __str__(self):
         return '\n'.join(str(d) for d in self.dictionaries)
 
+    def __contains__(self, other):
+        return len(self.get(other)) > 0
+
     def add(self, t):
         node = Node(t)
         for i, elem in enumerate(t):
@@ -30,6 +33,8 @@ class DataBase(object):
                         'equal or less in length to the tuples it stores')
             if elem != '*':
                 foundSets.append(self.dictionaries[i][elem])
+        if len(foundSets) == 0:
+            return []
         found = set.intersection(*foundSets)
         return [node.item for node in found]
 
