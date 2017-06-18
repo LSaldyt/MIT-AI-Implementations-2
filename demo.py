@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from kmap import KnowledgeMap
 
-def demo():
+def common_sense():
     '''
     Why can you pull something with a string but not push it?
+
+    Obviously a work in progress
     '''
     kmap = KnowledgeMap()
     kmap.add('string can force-transfer', **{'conditions':{'string is taut'}})
@@ -17,5 +19,13 @@ def demo():
     kmap.add('string is taut')
     print(kmap.query('string can force-transfer', check_condition))
 
+def syllogism():
+    kmap = KnowledgeMap()
+    kmap.add('socrates isa man')
+    kmap.add('man is mortal')
+    kmap.infer()
+    print(kmap.query('socrates is mortal'))
+
 if __name__ == '__main__':
-    demo()
+    #common_sense()
+    syllogism()

@@ -21,6 +21,14 @@ class KnowledgeMap(object):
         matches = [(m, self.extra[m]) for m in matches]
         return matches
 
+    def inherit(self):
+        for clause, extra in self.get('* isa *'):
+            for prop, extra in self.get((clause.b, '*', '*')):
+                self.add((clause.a, prop.relation, prop.b))
+
+    def infer(self):
+        self.inherit()
+
     def query(self, t, check_extra=lambda e : True):
         t = to_clause(t)
         match = t in self.database

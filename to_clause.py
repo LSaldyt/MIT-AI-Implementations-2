@@ -7,6 +7,8 @@ def to_clause(*args):
         item = args[0]
         if isinstance(item, Clause):
             return item
+        elif isinstance(item, tuple):
+            return Clause(*item)
         else:
             return Clause(*item.split())
     else:
