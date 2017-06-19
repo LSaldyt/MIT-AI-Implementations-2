@@ -18,10 +18,13 @@ class DataBase(object):
         self.dictionaries = []
 
     def __str__(self):
-        return '\n'.join(str(node) for node in self.dictionaries[0].values())
+        return '\n'.join(str(node) for node in self.clauses())
 
     def __contains__(self, other):
         return len(self.get(other)) > 0
+
+    def clauses(self):
+        return self.dictionaries[0].values()
 
     def add(self, t):
         node = Node(t)

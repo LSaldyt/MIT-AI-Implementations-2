@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-Clause = namedtuple('Clause', ['a', 'relation', 'b'])
+Clause = namedtuple('Clause', ['name', 'relation', 'node'])
 def _show_clause(c):
     return '{:<15}-{:-^15}>{:>15}'.format(*c)
 Clause.__str__ = _show_clause

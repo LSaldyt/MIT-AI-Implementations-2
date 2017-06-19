@@ -1,58 +1,79 @@
-from collections import defaultdict
-from database    import DataBase
-from to_clause   import to_clause
+from relationmap import RelationMap
+from collections import defaultdict, namedtuple
+from to_clause   import to_clause, Clause
+
+MultiClause = namedtuple('MultiClause', ['names', 'relations', 'nodes'])
+
+def score_concreteness(clause):
+    return sum([(1 if '@' not in field else 0) for field in clause])
+
+def to_queries(clause, variables):
+    def process(s):
+        if '@' in s:
+            if s in variables:
+                return variables[s]
+            else:
+                return ['*']
+        else:
+            return [s]
+    mc      = MultiClause(*tuple(process(field) for field in clause))
+    queries = []
+    for name in mc.names:
+        for relation in mc.relations:
+            for node in mc.nodes:
+                queries.append(Clause(name, relation, node))
+    return queries 
+
+is_var = lambda s : '@' in s
 
 class KnowledgeMap(object):
-    
     def __init__(self):
-        self.database = DataBase()
-        self.extra    = defaultdict(lambda : defaultdict(set))
+        self.relations = RelationMap()
+        self.learned   = list()
 
     def __str__(self):
-        return str(self.database)
+        return str(self.relations)
 
     def add(self, t, **kwargs):
-        t = to_clause(t)
-        self.database.add(t)
-        for k, v in kwargs.items():
-            v = set(to_clause(elem) for elem in v)
-            self.extra[t][k].update(v)
+        self.relations.add(t, **kwargs)
 
     def get(self, t):
-        t = to_clause(t)
-        matches = self.database.get(t)
-        matches = [(m, self.extra[m]) for m in matches]
-        return matches
+        return self.relations.get(t)
 
-    def pretty_get(self, t):
-        print(t)
-        print('_' * 47)
-        matches = self.get(t)
-        for match, extra in matches:
-            print(match)
-            if len(extra) > 0:
-                print(extra)
-        print('_' * 47)
-                
+    def teach(self, teachDict):
+        process = lambda v : {to_clause(s) for s in v}
+        teachDict = {k : process(v) for k, v in teachDict.items()}
+        self.learned.append(teachDict)
 
-    def inherit(self):
-        for clause, extra in self.get('* isa *'):
-            for prop, extra in self.get((clause.b, '*', '*')):
-                self.add((clause.a, prop.relation, prop.b))
+    def fill_variables(self, clause, variables):
+        for query in to_queries(clause, variables):
+            matches = self.get(query)
+            for match, extra in matches:
+                for cfield, mfield in zip(clause, match):
+                    if is_var(cfield):
+                        variables[cfield].add(mfield)
+
+    def add_inferred(self, infers, variables):
+        for clause in infers:
+            mc = MultiClause([], [], [])
+            for i, field in enumerate(clause):
+                if field in variables:
+                    for var in variables[field]:
+                        mc[i].append(var)
+                else:
+                    mc[i].append(field)
+            for name in mc.names:
+                for relation in mc.relations:
+                    for node in mc.nodes:
+                        self.add(Clause(name, relation, node))
 
     def infer(self):
-        self.inherit()
+        for teachDict in self.learned:
+            variables = defaultdict(set)
+            predicates = sorted(teachDict['if'], key=score_concreteness, reverse=True)
+            for predicate in predicates:
+                self.fill_variables(predicate, variables)
+            self.add_inferred(teachDict['then'], variables)
 
-    def query(self, t, check_extra=lambda e : True):
-        t = to_clause(t)
-        match = t in self.database
-        extra = self.extra[t]
-        return match and check_extra(extra)
-
-    def create_extra_checker(self, field, function):
-        def check(extra):
-            for clause in extra[field]:
-                if not getattr(self, function)(clause):
-                    return False
-            return True
-        return check
+    def ask(self, t):
+        return False

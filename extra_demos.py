@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from kmap import KnowledgeMap
+from relationmap import RelationMap
 
 def common_sense():
     '''
@@ -7,36 +7,36 @@ def common_sense():
 
     Obviously a work in progress
     '''
-    kmap = KnowledgeMap()
-    kmap.add('string can force-transfer', **{'conditions':{'string is taut'}})
-    kmap.add('lever can force-transfer',  **{'causes':{'lever is solid'}})
+    relationmap = RelationMap()
+    relationmap.add('string can force-transfer', **{'conditions':{'string is taut'}})
+    relationmap.add('lever can force-transfer',  **{'causes':{'lever is solid'}})
 
-    print(kmap.get('* can force-transfer'))
+    print(relationmap.get('* can force-transfer'))
 
-    check_condition = kmap.create_extra_checker('conditions', 'query')
+    check_condition = relationmap.create_extra_checker('conditions', 'query')
 
-    print(kmap.query('string can force-transfer', check_condition))
-    kmap.add('string is taut')
-    print(kmap.query('string can force-transfer', check_condition))
+    print(relationmap.query('string can force-transfer', check_condition))
+    relationmap.add('string is taut')
+    print(relationmap.query('string can force-transfer', check_condition))
 
 def syllogism():
-    kmap = KnowledgeMap()
-    kmap.add('socrates isa man')
-    kmap.add('man is mortal')
-    kmap.infer()
-    print(kmap.query('socrates is mortal'))
+    relationmap = RelationMap()
+    relationmap.add('socrates isa man')
+    relationmap.add('man is mortal')
+    #relationmap.infer()
+    #print(relationmap.query('socrates is mortal'))
 
 def description_matching():
-    kmap = KnowledgeMap()
-    kmap.add('firetruck isa vehicle')
-    kmap.add('firetruck is red')
-    kmap.add('firetruck is metal')
-    kmap.add('apple isa fruit')
-    kmap.add('apple is red')
-    kmap.add('apple is round')
+    relationmap = RelationMap()
+    relationmap.add('firetruck isa vehicle')
+    relationmap.add('firetruck is red')
+    relationmap.add('firetruck is metal')
+    relationmap.add('apple isa fruit')
+    relationmap.add('apple is red')
+    relationmap.add('apple is round')
 
-    kmap.pretty_get('* is red')
-    kmap.pretty_get('* is round')
+    relationmap.pretty_get('* is red')
+    relationmap.pretty_get('* is round')
 if __name__ == '__main__':
     #print('common sense')
     #common_sense()
