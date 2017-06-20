@@ -1,4 +1,5 @@
 from collections import defaultdict
+from clause      import Clause
 
 class Node(object):
     def __init__(self, item):
@@ -24,7 +25,9 @@ class DataBase(object):
         return len(self.get(other)) > 0
 
     def clauses(self):
-        return self.dictionaries[0].values()
+        for clauseset in self.dictionaries[0].values():
+            for clause in clauseset:
+                yield clause
 
     def add(self, t):
         node = Node(t)
@@ -34,6 +37,8 @@ class DataBase(object):
             self.dictionaries[i][elem].add(node)
 
     def get(self, t):
+        if t == Clause('* * *'):
+            return [node.item for node in self.clauses()]
         foundSets = []
         for i, elem in enumerate(t):
             if i + 1 > len(self.dictionaries):

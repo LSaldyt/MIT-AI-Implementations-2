@@ -1,3 +1,4 @@
+'''
 def get(self, t, key='name', eKey=None):
     matches = self.relations.get(t)
     retrieve = lambda t : t if key is None else getattr(t, key)
@@ -40,3 +41,4 @@ def similarities(self, a, b):
 
 def differences(self, a, b):
     return self.contrast(a, b)[1]
+'''
