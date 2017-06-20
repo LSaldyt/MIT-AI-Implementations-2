@@ -58,10 +58,11 @@ class KnowledgeMap(object):
                         #print('here k:{} vs:{}'.format(k, vs))
 
     def add_inferred(self, infers, variables):
-        for clause in infers:
+        for eclause in infers:
             mc = MultiClause([], [], [])
+            extras = defaultdict(set)
             broke = False
-            for i, field in enumerate(clause.fields()):
+            for i, field in enumerate(eclause.clause):
                 if is_var(field):
                     if field in variables:
                         for var in variables[field]:
@@ -76,7 +77,7 @@ class KnowledgeMap(object):
 
             for clause in expand_multiclause(mc):
                 print('adding {}'.format(clause))
-                self.inferred.append(clause)
+                self.inferred.append(ExtraClause(clause, {})) # TODO: retain extra info in inferences
 
     def infer(self):
         for teachDict in self.learned:

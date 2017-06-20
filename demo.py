@@ -29,6 +29,19 @@ def teach_conditionality():
     kmap.infer()
     #print(kmap)
 
+def teach_causality():
+    kmap = KnowledgeMap()
+    kmap.add('macbeth kill king', **{'cause' : {'macbeth want-to-be king'}})
+    kmap.add('mystery-person want-to-be king')
+
+    kmap.teach({
+        'if'   : [ExtraClause('@x @rel1 @y', {'cause' : {'@x @rel2 @c'}}), ExtraClause('@z @rel2 @c', {})],
+        'then' : [ExtraClause('@z @rel1 @y', {'cause' : {'@z @rel2 @c'}})]
+        })
+
+    kmap.infer()
+
 if __name__ == '__main__':
     teach_syllogism()
     teach_conditionality()
+    teach_causality()
