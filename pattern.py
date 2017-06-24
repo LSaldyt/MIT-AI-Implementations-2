@@ -35,11 +35,11 @@ class Pattern(object):
     def fill_variables(self, kmap):
         for predicate in self.predicates:
             for query in self.to_queries(predicate.clause):
-                matches = kmap.get(query)
-                for match, extra in matches:
-                    if self.compare_extras(predicate.extra, extra):
-                        self.add_variables(zip(predicate.clause, match))
-                        for k, *vs in common_entries(predicate.extra, extra):
+                matches = kmap.get(ExtraClause(query))
+                for match in matches:
+                    if self.compare_extras(predicate.extra, match.extra):
+                        self.add_variables(zip(predicate.clause, match.clause))
+                        for k, *vs in common_entries(predicate.extra, match.extra):
                             self.add_variables(zip(*vs))
 
     def get_inferred(self):
@@ -61,5 +61,4 @@ class Pattern(object):
                 break
 
             for clause in expand_multiclause(mc):
-                print('adding {}'.format(clause))
                 yield ExtraClause(clause, {})

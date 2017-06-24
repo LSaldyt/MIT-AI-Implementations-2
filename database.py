@@ -1,46 +1,36 @@
 from collections import defaultdict
 from clause      import Clause
+from extraclause import ExtraClause
 from node        import Node
 
+from clausedb import ClauseDB
 
 class DataBase(object):
     def __init__(self):
-        self.dictionaries = []
+        self.clauseDB   = ClauseDB()
+        self.extraDicts = defaultdict(ClauseDB)
 
-    def __str__(self):
-        return '\n'.join(str(node) for node in self.clauses())
+    def add(self, ec):
+        node = Node(ec)
+        self.clauseDB.add(node, ec.clause)
+        for k, vs in ec.extra.items():
+            for v in vs:
+                self.extraDicts[k].add(node, v)
 
-    def __contains__(self, other):
-        return len(self.get(other)) > 0
-
-    def clauses(self):
-        for clauseset in self.dictionaries[0].values():
-            for clause in clauseset:
-                yield clause
-
-    def add(self, t):
-        node = Node(t)
-        for i, elem in enumerate(t):
-            if len(self.dictionaries) < i + 1:
-                self.dictionaries.append(defaultdict(set))
-            self.dictionaries[i][elem].add(node)
-
-    def get(self, t):
-        if t == Clause('* * *'):
-            return [node.item for node in self.clauses()]
-        foundSets = []
-        for i, elem in enumerate(t):
-            if i + 1 > len(self.dictionaries):
-                raise KeyError(
-                        'DataBase can only be indexed by tuples ' + \
-                        'equal or less in length to the tuples it stores')
-            if elem != '*':
-                foundSets.append(self.dictionaries[i][elem])
-        if len(foundSets) == 0:
-            return []
-        found = set.intersection(*foundSets)
-        return [node.item for node in found]
+    def get(self, ec):
+        cresults = set(self.clauseDB.get(ec.clause))
+        if len(ec.extra.items()) == 0:
+            return cresults
+        eresults = set()
+        for k, vs in ec.extra.items():
+            for v in vs:
+                for found in self.extraDicts[k].get(v):
+                    eresults.add(found)
+        return set.intersection(cresults, eresults)
 
 
-
-
+if __name__ == '__main__':
+    db = DataBase()
+    db.add(ExtraClause('macbeth kill king', {'cause' : {'macbeth is weak'}}))
+    print(db.get(ExtraClause('* kill *', {})))
+    print(db.get(ExtraClause('* * *', {'cause' : {'* is weak'}})))

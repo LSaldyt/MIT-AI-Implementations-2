@@ -2,7 +2,9 @@ from collections import namedtuple
 from clause      import Clause
 
 class ExtraClause(object):
-    def __init__(self, clause, extra):
+    def __init__(self, clause, extra=None):
+        if extra is None:
+            extra = dict()
         self.clause = Clause(clause)
         self.extra  = {k : {Clause(item) for item in v} for k, v in extra.items()}
 

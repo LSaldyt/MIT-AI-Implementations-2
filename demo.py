@@ -5,8 +5,8 @@ from pattern     import Pattern
 
 def teach_syllogism():
     kmap = KnowledgeMap()
-    kmap.add('socrates isa man')
-    kmap.add('man is mortal')
+    kmap.add(ExtraClause('socrates isa man'))
+    kmap.add(ExtraClause('man is mortal'))
 
     kmap.teach(Pattern(
         [ExtraClause('@x isa @y', {}), ExtraClause('@y @rel @z', {})],
@@ -14,7 +14,7 @@ def teach_syllogism():
         ))
 
     kmap.infer()
-    kmap.ask('socrates is mortal')
+    #kmap.ask('socrates is mortal')
 
 def teach_conditionality():
     kmap = KnowledgeMap()
@@ -42,5 +42,5 @@ def teach_causality():
 
 if __name__ == '__main__':
     teach_syllogism()
-    teach_conditionality()
-    teach_causality()
+    #teach_conditionality()
+    #teach_causality()
