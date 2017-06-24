@@ -39,8 +39,8 @@ class RelationMap(object):
                 print(extra)
         print('_' * 47)
                 
-    def query(self, t, check_extra=lambda e : True):
+    def query(self, t):
         t = Clause(t)
         match = t in self.database
         extra = self.extra[t]
-        return match and check_extra(extra)
+        return match
