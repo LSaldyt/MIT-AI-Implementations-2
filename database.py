@@ -1,18 +1,7 @@
 from collections import defaultdict
 from clause      import Clause
+from node        import Node
 
-class Node(object):
-    def __init__(self, item):
-        self.item = item
-
-    def __str__(self):
-        return str(self.item)
-
-    def __repr__(self):
-        return str(self)
-
-    def __getattr__(self, attr):
-        return getattr(self.item, attr)
 
 class DataBase(object):
     def __init__(self):

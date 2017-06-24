@@ -5,21 +5,8 @@ from clause      import Clause
 from multiclause import MultiClause, expand_multiclause
 from extraclause import ExtraClause
 
-from common_entries import common_entries
 
-def to_queries(clause, variables):
-    def process(s):
-        if '@' in s:
-            if s in variables:
-                return variables[s]
-            else:
-                return ['*']
-        else:
-            return [s]
-    mc = MultiClause(*tuple(process(field) for field in clause))
-    return expand_multiclause(mc)
-
-is_var = lambda s : '@' in s
+from pattern import Pattern, is_var
 
 class KnowledgeMap(object):
     def __init__(self):
@@ -36,26 +23,9 @@ class KnowledgeMap(object):
     def get(self, t):
         return self.relations.get(t)
 
-    def teach(self, teachDict):
-        teachDict = {k : v for k, v in teachDict.items()}
-        self.learned.append(teachDict)
+    def teach(self, pattern):
+        self.learned.append(pattern)
 
-    def compare_extras(self, a, b):
-        return set.issubset(set(a.keys()), set(b.keys()))
-
-    def fill_variables(self, eclause, variables):
-        for query in to_queries(eclause.clause, variables):
-            matches = self.get(query)
-            for match, extra in matches:
-                if self.compare_extras(eclause.extra, extra):
-                    for cfield, mfield in zip(eclause.clause, match):
-                        if is_var(cfield):
-                            variables[cfield].add(mfield)
-                    for k, *vs in common_entries(eclause.extra, extra):
-                        for cfield, mfield in zip(*vs):
-                            if is_var(cfield):
-                                variables[cfield].add(mfield)
-                        #print('here k:{} vs:{}'.format(k, vs))
 
     def add_inferred(self, infers, variables):
         for eclause in infers:
@@ -80,13 +50,9 @@ class KnowledgeMap(object):
                 self.inferred.append(ExtraClause(clause, {})) # TODO: retain extra info in inferences
 
     def infer(self):
-        for teachDict in self.learned:
-            variables = defaultdict(set)
-            predicates = teachDict['if']
-            for predicate in predicates:
-                self.fill_variables(predicate, variables)
-            print(variables)
-            self.add_inferred(teachDict['then'], variables)
+        for pattern in self.learned:
+            pattern.fill_variables(self)
+            self.add_inferred(pattern.inferred, pattern.variables)
         print(self.inferred)
 
     def ask(self, t):
