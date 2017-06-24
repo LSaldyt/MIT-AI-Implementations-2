@@ -14,7 +14,6 @@ def teach_syllogism():
         ))
 
     kmap.infer()
-    #print(kmap)
     kmap.ask('socrates is mortal')
 
 def teach_conditionality():
@@ -28,7 +27,6 @@ def teach_conditionality():
         ))
 
     kmap.infer()
-    #print(kmap)
 
 def teach_causality():
     kmap = KnowledgeMap()

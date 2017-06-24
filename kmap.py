@@ -27,32 +27,10 @@ class KnowledgeMap(object):
         self.learned.append(pattern)
 
 
-    def add_inferred(self, infers, variables):
-        for eclause in infers:
-            mc = MultiClause([], [], [])
-            extras = defaultdict(set)
-            broke = False
-            for i, field in enumerate(eclause.clause):
-                if is_var(field):
-                    if field in variables:
-                        for var in variables[field]:
-                            mc[i].append(var)
-                    else:
-                        broke = True
-                        break
-                else:
-                    mc[i].append(field)
-            if broke:
-                break
-
-            for clause in expand_multiclause(mc):
-                print('adding {}'.format(clause))
-                self.inferred.append(ExtraClause(clause, {})) # TODO: retain extra info in inferences
-
     def infer(self):
         for pattern in self.learned:
             pattern.fill_variables(self)
-            self.add_inferred(pattern.inferred, pattern.variables)
+            self.inferred.extend(pattern.get_inferred())
         print(self.inferred)
 
     def ask(self, t):
