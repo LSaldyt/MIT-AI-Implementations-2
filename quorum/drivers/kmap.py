@@ -30,7 +30,8 @@ class KnowledgeMap(object):
         for pattern in self.learned:
             pattern.fill_variables(self)
             self.inferred.extend(pattern.get_inferred())
-        print(self.inferred)
+        for inferred in self.inferred:
+            self.add(inferred)
 
     def update(self, other):
         for clause in other.database.clauses():

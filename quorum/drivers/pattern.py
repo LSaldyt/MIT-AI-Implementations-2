@@ -12,6 +12,11 @@ class Pattern(object):
         self.inferred   = inferred
         self.variables  = defaultdict(set)
 
+    def __str__(self):
+        return 'if\n    {}\nthen\n    {}\n'.format(
+                '\n    '.join(map(str, self.predicates)),
+                '\n    '.join(map(str, self.inferred)))
+
     def process(self, field):
         if '@' in field:
             if field in self.variables:

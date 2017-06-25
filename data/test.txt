@@ -1,2 +1,4 @@
 it is raining.
 it is cloudy when it is raining.
+
+if @a @rel1 @b when @c @rel2 @d, @c @rel2 @d then @a @rel1 @b.

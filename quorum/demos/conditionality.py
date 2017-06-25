@@ -15,3 +15,4 @@ def conditionality(args):
         ))
 
     kmap.infer()
+    print(kmap)

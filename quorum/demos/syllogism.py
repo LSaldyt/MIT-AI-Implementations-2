@@ -15,3 +15,4 @@ def syllogism(args):
         ))
 
     kmap.infer()
+    print(kmap)

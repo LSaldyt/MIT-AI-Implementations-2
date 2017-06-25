@@ -14,3 +14,4 @@ def causality(args):
         ))
 
     kmap.infer()
+    print(kmap)
