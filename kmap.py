@@ -14,7 +14,7 @@ class KnowledgeMap(object):
         self.inferred  = list()
 
     def __str__(self):
-        return str(self.relations)
+        return str(self.database)
 
     def add(self, ec):
         self.database.add(ec)

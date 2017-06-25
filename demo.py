@@ -18,8 +18,8 @@ def teach_syllogism():
 
 def teach_conditionality():
     kmap = KnowledgeMap()
-    kmap.add('sky is cloudy', **{'condition' : {'weather is raining'}})
-    kmap.add('weather is raining')
+    kmap.add(ChainClause('sky is cloudy', {'condition' : {'weather is raining'}}))
+    kmap.add(ChainClause('weather is raining'))
 
     kmap.teach(Pattern(
         [ChainClause('@x @rel1 @y', {'condition' : {'@x @rel2 @c'}}), ChainClause('@x @rel2 @c', {})],
@@ -30,8 +30,8 @@ def teach_conditionality():
 
 def teach_causality():
     kmap = KnowledgeMap()
-    kmap.add('macbeth kill king', **{'cause' : {'macbeth want-to-be king'}})
-    kmap.add('mystery-person want-to-be king')
+    kmap.add(ChainClause('macbeth kill king', {'cause' : {'macbeth want-to-be king'}}))
+    kmap.add(ChainClause('mystery-person want-to-be king'))
 
     kmap.teach(Pattern(
         [ChainClause('@x @rel1 @y', {'cause' : {'@x @rel2 @c'}}), ChainClause('@z @rel2 @c', {})],
@@ -41,6 +41,6 @@ def teach_causality():
     kmap.infer()
 
 if __name__ == '__main__':
-    teach_syllogism()
-    #teach_conditionality()
+    #teach_syllogism()
+    teach_conditionality()
     #teach_causality()

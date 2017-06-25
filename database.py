@@ -1,5 +1,5 @@
 from collections import defaultdict
-from clause      import Clause
+from clause       import Clause
 from chainedclause import ChainClause
 from node        import Node
 
@@ -9,6 +9,11 @@ class DataBase(object):
     def __init__(self):
         self.clauseDB   = ClauseDB()
         self.chainDicts = defaultdict(ClauseDB)
+
+    def __str__(self):
+        return '{}\n{}'.format(
+                self.clauseDB,
+                self.chainDicts)
 
     def add(self, ec):
         node = Node(ec)
@@ -25,10 +30,3 @@ class DataBase(object):
             for found in self.chainDicts[k].get(v):
                 eresults.add(found)
         return set.intersection(cresults, eresults)
-
-
-if __name__ == '__main__':
-    db = DataBase()
-    db.add(ChainClause('macbeth kill king', {'cause' : {'macbeth is weak'}}))
-    print(db.get(ChainClause('* kill *', {})))
-    print(db.get(ChainClause('* * *', {'cause' : {'* is weak'}})))
