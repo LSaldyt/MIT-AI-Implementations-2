@@ -32,5 +32,9 @@ class KnowledgeMap(object):
             self.inferred.extend(pattern.get_inferred())
         print(self.inferred)
 
+    def update(self, other):
+        for clause in other.database.clauses():
+            self.add(clause)
+
     def ask(self, t):
         raise NotImplementedError('Self explanatory')

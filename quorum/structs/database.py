@@ -17,6 +17,9 @@ class DataBase(object):
                 self.clauseDB,
                 self.chainDicts)
 
+    def clauses(self):
+        return self.clauseDB.clauses()
+
     def add(self, ec):
         node = Node(ec)
         self.clauseDB.add(node, ec.clause)

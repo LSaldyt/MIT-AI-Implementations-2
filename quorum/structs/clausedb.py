@@ -38,7 +38,3 @@ class ClauseDB(object):
             return []
         found = set.intersection(*foundSets)
         return [node.item for node in found]
-
-
-
-

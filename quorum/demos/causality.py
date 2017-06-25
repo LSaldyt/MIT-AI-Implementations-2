@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-from quorum import KnowledgeMap
-from quorum import Pattern
+from quorum import KnowledgeMap, Pattern
 
 from quorum.clauses.chainedclause import ChainClause
 
