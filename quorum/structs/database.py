@@ -13,9 +13,13 @@ class DataBase(object):
         self.chainDicts = defaultdict(ClauseDB)
 
     def __str__(self):
+        chainDictStr = '{}'.format(
+                str(list(self.chainDicts.items()))
+                )
         return '{}\n{}'.format(
                 self.clauseDB,
-                self.chainDicts)
+                chainDictStr)
+                #self.chainDicts)
 
     def clauses(self):
         return self.clauseDB.clauses()

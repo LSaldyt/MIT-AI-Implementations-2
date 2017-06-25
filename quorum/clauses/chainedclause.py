@@ -12,7 +12,7 @@ class ChainClause(object):
     def __str__(self):
         if len(self.chained) < 1:
             return str(self.clause)
-        return '{} where {}'.format(self.clause, self.chained)
+        return '{} {}'.format(self.clause, self.chained)
 
     def __repr__(self):
         return str(self)

@@ -4,7 +4,7 @@ from ..clauses.clause        import Clause
 from ..clauses.multiclause   import MultiClause, expand_multiclause
 from ..clauses.chainedclause import ChainClause
 
-from ..structs.database      import DataBase
+from ..structs.database import DataBase
 
 from .pattern import Pattern, is_var
 
@@ -15,7 +15,10 @@ class KnowledgeMap(object):
         self.inferred  = list()
 
     def __str__(self):
-        return str(self.database)
+        return 'KnowledgeMap:\n{}\n{}\n{}\n'.format(
+                str(self.database),
+                '_' * 80,
+                '\n'.join(map(str, self.learned)))
 
     def add(self, ec):
         self.database.add(ec)
@@ -36,6 +39,8 @@ class KnowledgeMap(object):
     def update(self, other):
         for clause in other.database.clauses():
             self.add(clause)
+        for pattern in other.learned:
+            self.learned.append(pattern)
 
     def ask(self, t):
         raise NotImplementedError('Self explanatory')

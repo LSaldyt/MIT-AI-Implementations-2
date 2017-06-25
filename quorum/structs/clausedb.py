@@ -9,13 +9,17 @@ class ClauseDB(object):
     def __str__(self):
         return '\n'.join(str(node) for node in self.clauses())
 
+    def __repr__(self):
+        return str(self)
+
     def __contains__(self, other):
         return len(self.get(other)) > 0
 
     def clauses(self):
-        for clauseset in self.dictionaries[0].values():
-            for clause in clauseset:
-                yield clause
+        if len(self.dictionaries) > 0:
+            for clauseset in self.dictionaries[0].values():
+                for clause in clauseset:
+                    yield clause
 
     def add(self, node, clause):
         for i, elem in enumerate(clause):

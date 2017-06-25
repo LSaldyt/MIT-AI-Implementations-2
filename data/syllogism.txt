@@ -1,0 +1,4 @@
+socrates isa man.
+man is mortal.
+if @instance isa @class, @class @rel @x
+then @instance @rel @x because @instance isa @class.
