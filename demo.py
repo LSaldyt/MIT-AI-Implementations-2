@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 from kmap        import KnowledgeMap
-from extraclause import ExtraClause
+from chainedclause import ChainClause
 from pattern     import Pattern
 
 def teach_syllogism():
     kmap = KnowledgeMap()
-    kmap.add(ExtraClause('socrates isa man'))
-    kmap.add(ExtraClause('man is mortal'))
+    kmap.add(ChainClause('socrates isa man'))
+    kmap.add(ChainClause('man is mortal'))
 
     kmap.teach(Pattern(
-        [ExtraClause('@x isa @y', {}), ExtraClause('@y @rel @z', {})],
-        [ExtraClause('@x @rel @z', {'cause' : {'@x isa @y'}})]
+        [ChainClause('@x isa @y', {}), ChainClause('@y @rel @z', {})],
+        [ChainClause('@x @rel @z', {'cause' : {'@x isa @y'}})]
         ))
 
     kmap.infer()
@@ -22,8 +22,8 @@ def teach_conditionality():
     kmap.add('weather is raining')
 
     kmap.teach(Pattern(
-        [ExtraClause('@x @rel1 @y', {'condition' : {'@x @rel2 @c'}}), ExtraClause('@x @rel2 @c', {})],
-        [ExtraClause('@x @rel1 @y', {})]
+        [ChainClause('@x @rel1 @y', {'condition' : {'@x @rel2 @c'}}), ChainClause('@x @rel2 @c', {})],
+        [ChainClause('@x @rel1 @y', {})]
         ))
 
     kmap.infer()
@@ -34,8 +34,8 @@ def teach_causality():
     kmap.add('mystery-person want-to-be king')
 
     kmap.teach(Pattern(
-        [ExtraClause('@x @rel1 @y', {'cause' : {'@x @rel2 @c'}}), ExtraClause('@z @rel2 @c', {})],
-        [ExtraClause('@z @rel1 @y', {'cause' : {'@z @rel2 @c'}})]
+        [ChainClause('@x @rel1 @y', {'cause' : {'@x @rel2 @c'}}), ChainClause('@z @rel2 @c', {})],
+        [ChainClause('@z @rel1 @y', {'cause' : {'@z @rel2 @c'}})]
         ))
 
     kmap.infer()

@@ -22,7 +22,7 @@ def cup():
     print(kmap)
 
     '''
-    causes = (kmap.get_extra('* enables drinking', 'causes'))
+    causes = (kmap.get_chained('* enables drinking', 'causes'))
     for cause in causes:
         abstract = kmap.abstract(cause)
         print(kmap.get(abstract))

@@ -1,7 +1,7 @@
 from collections import defaultdict
 from clause      import Clause
 from multiclause import MultiClause, expand_multiclause
-from extraclause import ExtraClause
+from chainedclause import ChainClause
 from database    import DataBase
 
 

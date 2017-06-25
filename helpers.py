@@ -5,11 +5,11 @@ def get(self, t, key='name', eKey=None):
     if eKey is None:
         return [retrieve(m) for m, _ in matches]
     elif eKey == '*':
-        return [(retrive(m), extra) for m, extra in matches]
+        return [(retrive(m), chained) for m, chained in matches]
     else:
-        return [(retrieve(m), extra[eKey]) for m, extra in matches]
+        return [(retrieve(m), chained[eKey]) for m, chained in matches]
 
-def get_extra(self, t, eKey):
+def get_chained(self, t, eKey):
     return set.union(*[elem[1] for elem in self.get(t, eKey=eKey)])
 
 def abstract(self, clause):

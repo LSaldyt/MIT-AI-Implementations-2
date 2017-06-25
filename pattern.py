@@ -1,6 +1,6 @@
 from multiclause import MultiClause, expand_multiclause, create_multiclause, is_var
-from multiextraclause import expand_multiextraclause, MultiExtraClause
-from extraclause import ExtraClause
+from multichainedclause import expand_multichainedclause, MultiChainClause
+from chainedclause import ChainClause
 from common_entries import common_entries
 
 from collections import defaultdict
@@ -24,7 +24,7 @@ class Pattern(object):
         mc = MultiClause(*tuple(self.process(field) for field in clause))
         return expand_multiclause(mc)
 
-    def compare_extras(self, a, b):
+    def compare_chains(self, a, b):
         return set.issubset(set(a.keys()), set(b.keys()))
 
     def add_variables(self, fields):
@@ -35,24 +35,24 @@ class Pattern(object):
     def fill_variables(self, kmap):
         for predicate in self.predicates:
             for query in self.to_queries(predicate.clause):
-                matches = kmap.get(ExtraClause(query))
+                matches = kmap.get(ChainClause(query))
                 for match in matches:
-                    if self.compare_extras(predicate.extra, match.extra):
+                    if self.compare_chains(predicate.chained, match.chained):
                         self.add_variables(zip(predicate.clause, match.clause))
-                        for k, *vs in common_entries(predicate.extra, match.extra):
+                        for k, *vs in common_entries(predicate.chained, match.chained):
                             self.add_variables(zip(*vs))
 
     def get_inferred(self):
         for eclause in self.inferred:
             mc  = create_multiclause(eclause.clause, self.variables)
-            extraDict = {k : create_multiclause(c, self.variables) for k, vs in eclause.extra.items() for c in vs}
-            mec = MultiExtraClause(mc, extraDict)
+            chainDict = {k : create_multiclause(c, self.variables) for k, vs in eclause.chained.items() for c in vs}
+            mec = MultiChainClause(mc, chainDict)
 
             '''
-    for k, vs in mec.extradict.items():
+    for k, vs in mec.chaindict.items():
         for v in vs:
-            expandedExtraDict[k].append(expand_multiclause(v))
+            expandedChainDict[k].append(expand_multiclause(v))
             '''
 
-            for clause in expand_multiextraclause(mec):
+            for clause in expand_multichainedclause(mec):
                 yield clause
