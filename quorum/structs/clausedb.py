@@ -1,5 +1,6 @@
 from collections import defaultdict
-from clause      import Clause
+
+from ..clauses.clause import Clause
 
 class ClauseDB(object):
     def __init__(self):

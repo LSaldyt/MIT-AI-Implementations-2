@@ -1,5 +1,6 @@
-from collections import namedtuple
-from clause      import Clause
+from collections  import namedtuple
+
+from .clause import Clause
 
 class ChainClause(object):
     def __init__(self, clause, chained=None):

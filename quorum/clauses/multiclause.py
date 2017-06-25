@@ -1,6 +1,8 @@
 from collections import namedtuple, defaultdict
-from clause      import Clause
-from subsets     import all_subsets
+
+from .clause import Clause
+
+from ..tools.subsets import all_subsets
 
 MultiClause = namedtuple('MultiClause', ['names', 'relations', 'nodes'])
 

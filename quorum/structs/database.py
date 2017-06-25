@@ -1,9 +1,11 @@
 from collections import defaultdict
-from clause       import Clause
-from chainedclause import ChainClause
-from node        import Node
 
-from clausedb import ClauseDB
+from .node        import Node
+
+from ..clauses.clause        import Clause
+from ..clauses.chainedclause import ChainClause
+
+from .clausedb import ClauseDB
 
 class DataBase(object):
     def __init__(self):

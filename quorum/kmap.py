@@ -1,11 +1,12 @@
 from collections import defaultdict
-from clause      import Clause
-from multiclause import MultiClause, expand_multiclause
-from chainedclause import ChainClause
-from database    import DataBase
 
+from .clauses.clause        import Clause
+from .clauses.multiclause   import MultiClause, expand_multiclause
+from .clauses.chainedclause import ChainClause
 
-from pattern import Pattern, is_var
+from .structs.database    import DataBase
+
+from .pattern import Pattern, is_var
 
 class KnowledgeMap(object):
     def __init__(self):

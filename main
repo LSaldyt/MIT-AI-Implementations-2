@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+import quorum.demos as demos
+import sys
+
+subscripts = {name : f for name, f in demos.__dict__.items() if callable(f) }
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    assert len(args) >= 1, 'Main script must be called with arguments'
+    subscript = args[0]
+    showHelp  = subscript in ['-h', '--help', '--show']
+    unknown   = subscript not in subscripts
+    if showHelp or unknown:
+        print('Subscripts available are:\n    {}'.format(
+              '\n    '.join(list(subscripts.keys()))))
+        if not showHelp:
+            raise ValueError('Unknown subscript: "{}"'.format(subscript))
+    else:
+        print(args[1:])
+        subscripts[subscript](args[1:])
+        

@@ -1,8 +1,10 @@
 from collections import namedtuple, defaultdict
-from clause      import Clause
-from multiclause import MultiClause, expand_multiclause, expand_multiclauses
-from chainedclause import ChainClause
-from subsets     import all_subsets
+
+from .clause        import Clause
+from .multiclause   import MultiClause, expand_multiclause, expand_multiclauses
+from .chainedclause import ChainClause
+
+from ..tools.subsets import all_subsets
 
 MultiChainClause = namedtuple('MultiChainClause', ['root', 'chaindict'])
 
