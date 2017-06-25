@@ -1,0 +1,2 @@
+it is raining.
+it is cloudy when it is raining.

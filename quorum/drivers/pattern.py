@@ -1,8 +1,8 @@
-from .clauses.multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
-from .clauses.multichainedclause import expand_multichainedclause, MultiChainClause
-from .clauses.chainedclause      import ChainClause
+from ..clauses.multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
+from ..clauses.multichainedclause import expand_multichainedclause, MultiChainClause
+from ..clauses.chainedclause      import ChainClause
 
-from .tools.common_entries import common_entries
+from ..tools.common_entries import common_entries
 
 from collections import defaultdict
 

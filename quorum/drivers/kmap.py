@@ -1,10 +1,10 @@
 from collections import defaultdict
 
-from .clauses.clause        import Clause
-from .clauses.multiclause   import MultiClause, expand_multiclause
-from .clauses.chainedclause import ChainClause
+from ..clauses.clause        import Clause
+from ..clauses.multiclause   import MultiClause, expand_multiclause
+from ..clauses.chainedclause import ChainClause
 
-from .structs.database    import DataBase
+from ..structs.database      import DataBase
 
 from .pattern import Pattern, is_var
 
