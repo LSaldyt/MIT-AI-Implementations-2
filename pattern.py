@@ -1,10 +1,9 @@
-from multiclause import MultiClause, expand_multiclause
+from multiclause import MultiClause, expand_multiclause, create_multiclause, is_var
+from multiextraclause import expand_multiextraclause, MultiExtraClause
 from extraclause import ExtraClause
 from common_entries import common_entries
 
 from collections import defaultdict
-
-is_var = lambda s : '@' in s
 
 class Pattern(object):
     def __init__(self, predicates, inferred):
@@ -12,16 +11,17 @@ class Pattern(object):
         self.inferred   = inferred
         self.variables  = defaultdict(set)
 
-    def to_queries(self, clause):
-        def process(s):
-            if '@' in s:
-                if s in self.variables:
-                    return self.variables[s]
-                else:
-                    return ['*']
+    def process(self, field):
+        if '@' in field:
+            if field in self.variables:
+                return self.variables[field]
             else:
-                return [s]
-        mc = MultiClause(*tuple(process(field) for field in clause))
+                return ['*']
+        else:
+            return [field]
+
+    def to_queries(self, clause):
+        mc = MultiClause(*tuple(self.process(field) for field in clause))
         return expand_multiclause(mc)
 
     def compare_extras(self, a, b):
@@ -44,21 +44,15 @@ class Pattern(object):
 
     def get_inferred(self):
         for eclause in self.inferred:
-            mc = MultiClause([], [], [])
-            extras = defaultdict(set)
-            broke = False
-            for i, field in enumerate(eclause.clause):
-                if is_var(field):
-                    if field in self.variables:
-                        for var in self.variables[field]:
-                            mc[i].append(var)
-                    else:
-                        broke = True
-                        break
-                else:
-                    mc[i].append(field)
-            if broke:
-                break
+            mc  = create_multiclause(eclause.clause, self.variables)
+            extraDict = {k : create_multiclause(c, self.variables) for k, vs in eclause.extra.items() for c in vs}
+            mec = MultiExtraClause(mc, extraDict)
 
-            for clause in expand_multiclause(mc):
-                yield ExtraClause(clause, {})
+            '''
+    for k, vs in mec.extradict.items():
+        for v in vs:
+            expandedExtraDict[k].append(expand_multiclause(v))
+            '''
+
+            for clause in expand_multiextraclause(mec):
+                yield clause

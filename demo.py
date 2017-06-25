@@ -10,7 +10,7 @@ def teach_syllogism():
 
     kmap.teach(Pattern(
         [ExtraClause('@x isa @y', {}), ExtraClause('@y @rel @z', {})],
-        [ExtraClause('@x @rel @z', {})]
+        [ExtraClause('@x @rel @z', {'cause' : {'@x isa @y'}})]
         ))
 
     kmap.infer()

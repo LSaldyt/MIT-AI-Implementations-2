@@ -9,6 +9,8 @@ class ExtraClause(object):
         self.extra  = {k : {Clause(item) for item in v} for k, v in extra.items()}
 
     def __str__(self):
+        if len(self.extra) < 1:
+            return str(self.clause)
         return '{} where {}'.format(self.clause, self.extra)
 
     def __repr__(self):
