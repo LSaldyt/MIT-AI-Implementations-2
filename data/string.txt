@@ -1,0 +1,15 @@
+if @instance isa @class, @class @rel @x
+then @instance @rel @x because @instance isa @class.
+
+if @a @rel1 @b when @c @rel2 @d, @c @rel2 @d 
+then @a @rel1 @b.
+
+if @a requires @b, @c can @b then @a can-be-done-with @c.
+
+push isa movement.
+pull isa movement.
+movement requires force-transfer.
+
+string can force-transfer when string is taut.
+string is taut when string is pulling.
+

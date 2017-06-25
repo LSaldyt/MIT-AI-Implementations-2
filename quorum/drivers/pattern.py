@@ -26,11 +26,18 @@ class Pattern(object):
         else:
             return [field]
 
-    def to_queries(self, clause):
-        mc = MultiClause(*tuple(self.process(field) for field in clause))
-        return expand_multiclause(mc)
+    def create_multiclause(self, clause):
+        return MultiClause(*tuple(self.process(field) for field in clause))
+
+    def to_queries(self, eclause):
+        mc = self.create_multiclause(eclause.clause)
+        chainDict = {k : self.create_multiclause(c) for k, vs in eclause.chained.items() for c in vs}
+        mec = MultiChainClause(mc, chainDict)
+        return expand_multichainedclause(mec)
 
     def compare_chains(self, a, b):
+        print(a.keys(), b.keys())
+        return list(a.keys()) == list(b.keys())
         return set.issubset(set(a.keys()), set(b.keys()))
 
     def add_variables(self, fields):
@@ -40,8 +47,9 @@ class Pattern(object):
 
     def fill_variables(self, kmap):
         for predicate in self.predicates:
-            for query in self.to_queries(predicate.clause):
-                matches = kmap.get(ChainClause(query))
+            for query in self.to_queries(predicate):
+                print(query)
+                matches = kmap.get(query)
                 for match in matches:
                     if self.compare_chains(predicate.chained, match.chained):
                         self.add_variables(zip(predicate.clause, match.clause))
@@ -50,15 +58,11 @@ class Pattern(object):
 
     def get_inferred(self):
         for eclause in self.inferred:
-            mc  = create_multiclause(eclause.clause, self.variables)
-            chainDict = {k : create_multiclause(c, self.variables) for k, vs in eclause.chained.items() for c in vs}
-            mec = MultiChainClause(mc, chainDict)
-
-            '''
-    for k, vs in mec.chaindict.items():
-        for v in vs:
-            expandedChainDict[k].append(expand_multiclause(v))
-            '''
-
-            for clause in expand_multichainedclause(mec):
-                yield clause
+            try:
+                mc  = create_multiclause(eclause.clause, self.variables)
+                chainDict = {k : create_multiclause(c, self.variables) for k, vs in eclause.chained.items() for c in vs}
+                mec = MultiChainClause(mc, chainDict)
+                for clause in expand_multichainedclause(mec):
+                    yield clause
+            except KeyError:
+                pass
