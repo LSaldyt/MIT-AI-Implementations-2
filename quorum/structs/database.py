@@ -19,12 +19,13 @@ class DataBase(object):
         return '{}\n{}'.format(
                 self.clauseDB,
                 chainDictStr)
-                #self.chainDicts)
 
     def clauses(self):
         return self.clauseDB.clauses()
 
     def add(self, ec):
+        if len(self.get(ec)) > 0:
+            return
         node = Node(ec)
         self.clauseDB.add(node, ec.clause)
         for k, v in ec.chained_items():

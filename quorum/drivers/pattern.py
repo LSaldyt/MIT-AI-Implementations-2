@@ -10,7 +10,7 @@ class Pattern(object):
     def __init__(self, predicates, inferred):
         self.predicates = predicates 
         self.inferred   = inferred
-        self.variables  = defaultdict(set)
+        self.variables  = defaultdict(list)
 
     def __str__(self):
         return 'if\n    {}\nthen\n    {}\n'.format(
@@ -36,19 +36,18 @@ class Pattern(object):
         return expand_multichainedclause(mec)
 
     def compare_chains(self, a, b):
-        print(a.keys(), b.keys())
-        return list(a.keys()) == list(b.keys())
-        return set.issubset(set(a.keys()), set(b.keys()))
+        if len(a.keys()) == 0:
+            return False
+        return sorted(list(a.keys())) == sorted(list(b.keys()))
 
     def add_variables(self, fields):
         for cfield, mfield in fields:
             if is_var(cfield): 
-                self.variables[cfield].add(mfield)
+                self.variables[cfield].append(mfield)
 
     def fill_variables(self, kmap):
         for predicate in self.predicates:
             for query in self.to_queries(predicate):
-                print(query)
                 matches = kmap.get(query)
                 for match in matches:
                     if self.compare_chains(predicate.chained, match.chained):

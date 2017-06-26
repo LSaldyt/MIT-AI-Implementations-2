@@ -34,6 +34,7 @@ class KnowledgeMap(object):
             pattern.fill_variables(self)
             self.inferred.extend(pattern.get_inferred())
         for inferred in self.inferred:
+            #print(inferred)
             self.add(inferred)
 
     def update(self, other):
