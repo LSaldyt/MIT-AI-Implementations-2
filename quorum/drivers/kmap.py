@@ -12,7 +12,6 @@ class KnowledgeMap(object):
     def __init__(self):
         self.database  = DataBase()
         self.learned   = list()
-        self.inferred  = list()
 
     def __str__(self):
         return 'KnowledgeMap:\n{}\n{}\n{}\n'.format(
@@ -32,10 +31,8 @@ class KnowledgeMap(object):
     def infer(self):
         for pattern in self.learned:
             pattern.fill_variables(self)
-            self.inferred.extend(pattern.get_inferred())
-        for inferred in self.inferred:
-            #print(inferred)
-            self.add(inferred)
+            for item in pattern.get_inferred():
+                self.add(item)
 
     def update(self, other):
         for clause in other.database.clauses():

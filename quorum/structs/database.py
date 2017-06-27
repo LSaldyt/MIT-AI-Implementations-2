@@ -24,16 +24,16 @@ class DataBase(object):
         return self.clauseDB.clauses()
 
     def add(self, ec):
-        if len(self.get(ec)) > 0:
+        if ec in self.get(ec):
             return
         node = Node(ec)
         self.clauseDB.add(node, ec.clause)
         for k, v in ec.chained_items():
             self.chainDicts[k].add(node, v)
 
-    def get(self, ec):
+    def get(self, ec, strict=False):
         cresults = set(self.clauseDB.get(ec.clause))
-        if len(ec.chained.items()) == 0:
+        if not strict and len(ec.chained.items()) == 0:
             return cresults
         eresults = set()
         for k, v in ec.chained_items():

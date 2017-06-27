@@ -17,6 +17,13 @@ class ChainClause(object):
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        return ((self.clause,) + tuple(sorted(self.chained_items())) == 
+                (self.clause,) + tuple(sorted(self.chained_items())))
+
+    def __hash__(self):
+        return hash((self.clause,) + tuple(sorted(self.chained_items())))
+
     def fields(self):
         return list(self.clause) + [clause for subclauses in self.chained.values() for clause in subclauses]
 
