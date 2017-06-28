@@ -23,7 +23,22 @@ class KnowledgeMap(object):
         self.database.add(ec)
 
     def get(self, ec):
+        if isinstance(ec, str):
+            ec = ChainClause(ec)
         return self.database.get(ec)
+
+    def elements(self, index):
+        return [clause.item[index] for clause in self.database.clauses()]
+
+    def relations_to(self, elements=None, indexstr='{} * *', retrieve='name'):
+        if elements is None:
+            elements = self.elements('name')
+        searches  = (self.get(ChainClause(indexstr.format(elem))) for elem in elements)
+        results   = set.intersection(*searches) # For statistical pattern matching, change this line
+        retrieved = {getattr(clause.clause, retrieve) for clause in results}
+        relations = (self.get('{} * *'.format(r)) for r in retrieved)
+        relations = [r - results for r in relations]
+        return relations
 
     def teach(self, pattern):
         self.learned.append(pattern)
@@ -42,3 +57,4 @@ class KnowledgeMap(object):
 
     def ask(self, t):
         raise NotImplementedError('Self explanatory')
+

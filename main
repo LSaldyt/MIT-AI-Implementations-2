@@ -6,7 +6,8 @@ subscripts = {name : f for name, f in demos.__dict__.items() if callable(f) }
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    assert len(args) >= 1, 'Main script must be called with arguments'
+    if len(args) == 0:
+        args.append('main')
     subscript = args[0]
     showHelp  = subscript in ['-h', '--help', '--show']
     unknown   = subscript not in subscripts

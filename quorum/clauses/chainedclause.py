@@ -24,6 +24,11 @@ class ChainClause(object):
     def __hash__(self):
         return hash((self.clause,) + tuple(sorted(self.chained_items())))
 
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            return self.clause._asdict()[key]
+        return self.clause[key]
+
     def fields(self):
         return list(self.clause) + [clause for subclauses in self.chained.values() for clause in subclauses]
 
