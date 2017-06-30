@@ -5,12 +5,12 @@ from .node        import Node
 from ..clauses.clause        import Clause
 from ..clauses.chainedclause import ChainClause
 
-from .clausedb import ClauseDB
+from .clause_database import ClauseDataBase
 
 class DataBase(object):
     def __init__(self):
-        self.clauseDB   = ClauseDB()
-        self.chainDicts = defaultdict(ClauseDB)
+        self.clauseDB   = ClauseDataBase()
+        self.chainDicts = defaultdict(ClauseDataBase)
         self.names      = set()
 
     def __str__(self):

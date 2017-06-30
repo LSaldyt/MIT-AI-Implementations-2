@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from ..clauses.clause import Clause
 
-class ClauseDB(object):
+class ClauseDataBase(object):
     def __init__(self):
         self.dictionaries = []
 

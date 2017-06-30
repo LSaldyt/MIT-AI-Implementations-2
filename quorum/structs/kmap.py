@@ -1,20 +1,14 @@
-from collections import defaultdict, Counter
-from pprint      import pprint
-
-from ..clauses.clause        import Clause
-from ..clauses.multiclause   import MultiClause, expand_multiclause
 from ..clauses.chainedclause import ChainClause
 
-from ..pattern.pattern import Pattern, is_var
-
-from .database   import DataBase
-from .symboldict import SymbolDict
+from .database        import DataBase
+from .symbol_dict     import SymbolDict
+from .pattern_library import PatternLibrary
 
 class KnowledgeMap(object):
     def __init__(self):
-        self.database   = DataBase()
-        self.symbolDict = SymbolDict()
-        self.learned    = list()
+        self.database       = DataBase()
+        self.symbolDict     = SymbolDict()
+        self.patternLibrary = PatternLibrary()
 
     def __str__(self):
         return 'KnowledgeMap'
@@ -36,23 +30,12 @@ class KnowledgeMap(object):
     def get_components(self, name, query='* * *'):
         return self.symbolDict.get(name, query)
 
-    def elements(self, index):
-        return [clause.item[index] for clause in self.database.clauses()]
-
     def teach(self, pattern):
-        self.learned.append(pattern)
+        self.patternLibrary.teach(pattern)
 
     def infer(self):
-        for pattern in self.learned:
-            pattern.fill_variables(self.database)
-            for item in pattern.get_inferred():
-                self.add(item)
-
-    def update(self, other):
-        for clause in other.database.clauses():
-            self.add(clause)
-        for pattern in other.learned:
-            self.learned.append(pattern)
+        for item in self.patternLibrary.get_inferences(self.database):
+            self.add(item)
 
     def ask(self, t):
         raise NotImplementedError('Self explanatory')
