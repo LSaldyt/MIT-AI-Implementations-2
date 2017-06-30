@@ -11,6 +11,7 @@ class DataBase(object):
     def __init__(self):
         self.clauseDB   = ClauseDB()
         self.chainDicts = defaultdict(ClauseDB)
+        self.names      = set()
 
     def __str__(self):
         chainDictStr = '{}'.format(
@@ -24,6 +25,9 @@ class DataBase(object):
         return self.clauseDB.clauses()
 
     def add(self, ec):
+        if isinstance(ec, str):
+            ec = ChainClause(ec)
+        self.names.add(ec.clause.name)
         if ec in self.get(ec):
             return
         node = Node(ec)

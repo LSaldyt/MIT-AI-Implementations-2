@@ -2,4 +2,5 @@ corolla isa car
 corolla is white
 tundra isa car
 tundra is white
-
+ferarri isa car
+ferarri is red

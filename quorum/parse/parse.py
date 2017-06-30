@@ -3,8 +3,8 @@ from collections import defaultdict
 from ..clauses.clause        import Clause
 from ..clauses.chainedclause import ChainClause
 
-from ..drivers import KnowledgeMap
-from ..drivers import Pattern
+from ..structs import KnowledgeMap
+from ..pattern import Pattern
 
 def parse_clause(words):
     assert len(words) == 3
