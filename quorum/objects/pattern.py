@@ -1,6 +1,6 @@
-from ..clauses.multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
-from ..clauses.multichainedclause import expand_multichainedclause, MultiChainClause
-from ..clauses.chainedclause      import ChainClause
+from .multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
+from .multistatement import expand_multistatement, MultiStatement
+from .statement      import Statement
 
 from ..tools.common_entries import common_entries
 
@@ -25,8 +25,8 @@ class Pattern(object):
             try:
                 mc  = create_multiclause(eclause.clause, variables)
                 chainDict = {k : create_multiclause(c, variables) for k, vs in eclause.chained.items() for c in vs}
-                mec = MultiChainClause(mc, chainDict)
-                for clause in expand_multichainedclause(mec):
+                mec = MultiStatement(mc, chainDict)
+                for clause in expand_multistatement(mec):
                     yield clause
             except KeyError:
                 pass

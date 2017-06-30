@@ -1,7 +1,7 @@
 from collections import defaultdict
 
-from ..clauses.clause        import Clause
-from ..clauses.chainedclause import ChainClause
+from ..objects import Clause
+from ..objects import Statement
 
 from ..structs import KnowledgeMap
 from ..objects import Pattern
@@ -32,7 +32,7 @@ def parse_chained_clause(words):
     assert len(words) >= 3
     root      = parse_clause(words[:3])
     chainDict = parse_chained(words[3:])
-    return ChainClause(root, chainDict)
+    return Statement(root, chainDict)
 
 def parse_chained_clauses(sentence):
     clauses = sentence.split(',')

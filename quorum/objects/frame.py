@@ -1,6 +1,6 @@
-from ..clauses.multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
-from ..clauses.multichainedclause import expand_multichainedclause, MultiChainClause
-from ..clauses.chainedclause      import ChainClause
+from .multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
+from .multistatement import expand_multistatement, MultiStatement
+from .statement      import Statement
 
 from ..tools.common_entries import common_entries
 
@@ -29,8 +29,8 @@ class Frame(object):
     def to_queries(self, eclause):
         mc = self.create_multiclause(eclause.clause)
         chainDict = {k : self.create_multiclause(c) for k, vs in eclause.chained.items() for c in vs}
-        mec = MultiChainClause(mc, chainDict)
-        return expand_multichainedclause(mec)
+        mec = MultiStatement(mc, chainDict)
+        return expand_multistatement(mec)
 
     def compare_chains(self, a, b):
         if len(a.keys()) == 0:

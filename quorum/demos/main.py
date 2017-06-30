@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from quorum import KnowledgeMap
-from quorum.clauses.chainedclause import ChainClause
+from quorum.objects import Statement
 from quorum.parse import parse_text
 
 def main(args):

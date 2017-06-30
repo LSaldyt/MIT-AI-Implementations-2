@@ -1,4 +1,4 @@
-from ..clauses.chainedclause import ChainClause
+from ..objects.statement import Statement
 
 from .database        import DataBase
 from .symbol_dict     import SymbolDict
@@ -15,7 +15,7 @@ class KnowledgeMap(object):
 
     def add(self, ec):
         if isinstance(ec, str):
-            ec = ChainClause(ec)
+            ec = Statement(ec)
         self.symbolDict.add(ec.clause.name)
         self.database.add(ec)
 
@@ -24,7 +24,7 @@ class KnowledgeMap(object):
 
     def get(self, ec):
         if isinstance(ec, str):
-            ec = ChainClause(ec)
+            ec = Statement(ec)
         return self.database.get(ec)
 
     def get_components(self, name, query='* * *'):
