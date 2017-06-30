@@ -4,7 +4,7 @@ from ..clauses.clause        import Clause
 from ..clauses.chainedclause import ChainClause
 
 from ..structs import KnowledgeMap
-from ..pattern import Pattern
+from ..objects import Pattern
 
 def parse_clause(words):
     assert len(words) == 3

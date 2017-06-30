@@ -6,16 +6,13 @@ from ..tools.common_entries import common_entries
 
 from collections import defaultdict
 
-class Pattern(object):
-    def __init__(self, predicates, inferred):
-        self.predicates = predicates 
-        self.inferred   = inferred
-        self.variables  = defaultdict(list)
+class Frame(object):
+    def __init__(self, slots):
+        self.slots     = slots 
+        self.variables = defaultdict(list)
 
     def __str__(self):
-        return 'if\n    {}\nthen\n    {}\n'.format(
-                '\n    '.join(map(str, self.predicates)),
-                '\n    '.join(map(str, self.inferred)))
+        return '\n    '.join(map(str, self.slots))
 
     def process(self, field):
         if '@' in field:
@@ -46,7 +43,7 @@ class Pattern(object):
                 self.variables[cfield].append(mfield)
 
     def fill_variables(self, database):
-        for predicate in self.predicates:
+        for predicate in self.slots:
             for query in self.to_queries(predicate):
                 matches = database.get(query)
                 for match in matches:
@@ -55,13 +52,3 @@ class Pattern(object):
                         for k, *vs in common_entries(predicate.chained, match.chained):
                             self.add_variables(zip(*vs))
 
-    def get_inferred(self):
-        for eclause in self.inferred:
-            try:
-                mc  = create_multiclause(eclause.clause, self.variables)
-                chainDict = {k : create_multiclause(c, self.variables) for k, vs in eclause.chained.items() for c in vs}
-                mec = MultiChainClause(mc, chainDict)
-                for clause in expand_multichainedclause(mec):
-                    yield clause
-            except KeyError:
-                pass

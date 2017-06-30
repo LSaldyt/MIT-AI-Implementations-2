@@ -1,4 +1,5 @@
-from ..symbol import Symbol
+from ..objects import Symbol
+
 class SymbolDict(object):
     def __init__(self):
         self.symbols = dict()

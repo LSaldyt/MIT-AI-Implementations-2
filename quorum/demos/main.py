@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 from quorum import KnowledgeMap
 from quorum.clauses.chainedclause import ChainClause
-
 from quorum.parse import parse_text
-
-from quorum.symbol import Symbol
 
 def main(args):
     kmap = KnowledgeMap()
