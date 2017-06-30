@@ -4,18 +4,17 @@ from quorum.clauses.chainedclause import ChainClause
 
 from quorum.parse import parse_text
 
+from quorum.symbol import Symbol
+
 def main(args):
-    story = '''
-    car1 isa car.
-    car1 is red.
-    car2 isa car.
-    car2 is red.
-    car3 isa car.
-    car3 is blue.
-    '''
-    kmap = parse_text(story)
-    print(kmap)
-    print(kmap.elements('name'))
-    print(kmap.relations_to())
-    print(kmap.relations_to(indexstr='* is red'))
-    print(kmap.relations_to(indexstr='* isa car'))
+    apple = Symbol('apple')
+    apple.components.add('body shape round')
+    apple.components.add('body size fist')
+    apple.components.add('body color red')
+    apple.components.add('body taste tart')
+    apple.components.add('body taste sweet')
+    apple.components.add('stem color brown')
+    print('apple:')
+    print(apple)
+    print('component database:')
+    print(apple.components)
