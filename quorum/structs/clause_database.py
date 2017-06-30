@@ -2,20 +2,24 @@ from collections import defaultdict
 
 from ..clauses.clause import Clause
 
-class ClauseDB(object):
+class ClauseDataBase(object):
     def __init__(self):
         self.dictionaries = []
 
     def __str__(self):
         return '\n'.join(str(node) for node in self.clauses())
 
+    def __repr__(self):
+        return str(self)
+
     def __contains__(self, other):
         return len(self.get(other)) > 0
 
     def clauses(self):
-        for clauseset in self.dictionaries[0].values():
-            for clause in clauseset:
-                yield clause
+        if len(self.dictionaries) > 0:
+            for clauseset in self.dictionaries[0].values():
+                for clause in clauseset:
+                    yield clause
 
     def add(self, node, clause):
         for i, elem in enumerate(clause):
@@ -29,9 +33,9 @@ class ClauseDB(object):
         foundSets = []
         for i, elem in enumerate(clause):
             if i + 1 > len(self.dictionaries):
-                raise KeyError(
-                        'DataBase can only be indexed by tuples ' + \
-                        'equal or less in length to the tuples it stores')
+                print('Warning: DataBase can only be indexed by tuples ' + \
+                       'equal or less in length to the tuples it stores')
+                return []
             if elem != '*':
                 foundSets.append(self.dictionaries[i][elem])
         if len(foundSets) == 0:

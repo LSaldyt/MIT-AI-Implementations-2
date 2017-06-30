@@ -1,1 +1,1 @@
-from .parse import parse_file, parse_text
+from .parse import parse_file, parse_text, parse_pattern

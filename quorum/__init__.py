@@ -1,1 +1,1 @@
-from .drivers import *
+from .structs import KnowledgeMap
