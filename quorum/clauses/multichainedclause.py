@@ -4,7 +4,7 @@ from .clause        import Clause
 from .multiclause   import MultiClause, expand_multiclause, expand_multiclauses
 from .chainedclause import ChainClause
 
-from ..tools.subsets import all_subsets
+from ..tools.subsets import subsets
 
 MultiChainClause = namedtuple('MultiChainClause', ['root', 'chaindict'])
 
@@ -19,5 +19,5 @@ def expand_multichainedclause(mec):
             for subset in expand_multiclauses(chainClauses):
                 for item in subset:
                     kvs.append((k, set(item)))
-        for subset in all_subsets(kvs):
+        for subset in subsets(kvs):
             yield ChainClause(root, dict(subset))
