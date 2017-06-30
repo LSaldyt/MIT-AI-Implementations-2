@@ -7,14 +7,14 @@ from quorum.parse import parse_text
 from quorum.symbol import Symbol
 
 def main(args):
-    apple = Symbol('apple')
-    apple.components.add('body shape round')
-    apple.components.add('body size fist')
-    apple.components.add('body color red')
-    apple.components.add('body taste tart')
-    apple.components.add('body taste sweet')
-    apple.components.add('stem color brown')
-    print('apple:')
-    print(apple)
-    print('component database:')
-    print(apple.components)
+    kmap = KnowledgeMap()
+    kmap.add('apple isa fruit')
+    kmap.add_components(
+            'apple', 
+       ['body shape round',
+        'body size fist',
+        'body color red',
+        'body taste tart',
+        'body taste sweet',
+        'stem color brown'])
+    print(kmap.symbolDict['apple'])

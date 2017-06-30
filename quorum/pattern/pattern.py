@@ -45,10 +45,10 @@ class Pattern(object):
             if is_var(cfield): 
                 self.variables[cfield].append(mfield)
 
-    def fill_variables(self, kmap):
+    def fill_variables(self, database):
         for predicate in self.predicates:
             for query in self.to_queries(predicate):
-                matches = kmap.get(query)
+                matches = database.get(query)
                 for match in matches:
                     if self.compare_chains(predicate.chained, match.chained):
                         self.add_variables(zip(predicate.clause, match.clause))

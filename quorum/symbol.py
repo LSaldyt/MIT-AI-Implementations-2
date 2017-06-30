@@ -1,4 +1,4 @@
-from .structs import DataBase
+from .structs.database import DataBase
 
 '''
 Symbolic Apple example

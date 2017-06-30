@@ -2,7 +2,7 @@ from collections import namedtuple, defaultdict
 
 from .clause import Clause
 
-from ..tools.subsets import all_subsets
+from ..tools.subsets import subsets
 
 MultiClause = namedtuple('MultiClause', ['names', 'relations', 'nodes'])
 
@@ -16,7 +16,7 @@ def expand_multiclause(mc):
 
 def expand_multiclauses(mcs):
     expanded = [expand_multiclause(mc) for mc in mcs]
-    return all_subsets(expanded)
+    return subsets(expanded)
 
 def create_multiclause(clause, variables):
     mc = MultiClause([], [], [])
