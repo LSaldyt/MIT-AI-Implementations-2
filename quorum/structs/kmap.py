@@ -2,12 +2,14 @@ from ..objects.statement import Statement
 
 from .database        import DataBase
 from .symbol_dict     import SymbolDict
+from .relation_dict   import RelationDict
 from .pattern_library import PatternLibrary
 
 class KnowledgeMap(object):
     def __init__(self):
         self.database       = DataBase()
         self.symbolDict     = SymbolDict()
+        self.relationDict   = RelationDict()
         self.patternLibrary = PatternLibrary()
 
     def __str__(self):
@@ -17,6 +19,7 @@ class KnowledgeMap(object):
         if isinstance(ec, str):
             ec = Statement(ec)
         self.symbolDict.add(ec.clause.name)
+        self.relationDict.add(ec.clause.relation)
         self.database.add(ec)
 
     def add_components(self, name, components):
