@@ -1,4 +1,5 @@
-from ..symbol import Symbol
+from ..objects import Symbol
+
 class SymbolDict(object):
     def __init__(self):
         self.symbols = dict()
@@ -8,7 +9,7 @@ class SymbolDict(object):
 
     def add(self, name, clauses=None):
         if clauses is None:
-            clauses = []
+          clauses = []
         if name not in self.symbols:
             self.symbols[name] = Symbol(name)
         symbol = self.symbols[name]

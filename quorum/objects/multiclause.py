@@ -11,7 +11,7 @@ is_var = lambda s : '@' in s
 def expand_multiclause(mc):
     clauses = []
     for name, relation, node in zip(mc.names, mc.relations, mc.nodes):
-        clauses.append(Clause(name, relation, node))
+      clauses.append(Clause(name, relation, node))
     return clauses
 
 def expand_multiclauses(mcs):
