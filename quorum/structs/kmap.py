@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from ..objects.statement import Statement
 
 from .database        import DataBase
@@ -33,6 +35,11 @@ class KnowledgeMap(object):
     def get_components(self, name, query='* * *'):
         return self.symbolDict.get(name, query)
 
+    def attrs(self, attr, clauses=None):
+        if clauses is None:
+            clauses = self.get('* * *')
+        return {getattr(c.clause, attr) for c in clauses}
+
     def teach(self, pattern):
         self.patternLibrary.teach(pattern)
 
@@ -43,3 +50,25 @@ class KnowledgeMap(object):
     def ask(self, t):
         raise NotImplementedError('Self explanatory')
 
+    def references(self, root, depth):
+        assert depth >= 0
+        result  = dict()
+        clauses = set.union(
+                    self.get('{} * *'.format(root)),
+                    self.get('* * {}'.format(root)))
+        names   = set.union(
+                    self.attrs('name', clauses),
+                    self.attrs('node', clauses))
+        names.discard(root)
+        if depth == 0:
+            return names
+        else:
+            searches = [self.references(name, depth - 1) 
+                        for name in names]
+            return set.union(names, *searches)
+
+    def reference_dict(self, root, depth):
+        result = dict()
+        for i in range(depth):
+            result[i] = self.references(root, i)
+        return result

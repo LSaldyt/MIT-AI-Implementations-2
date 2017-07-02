@@ -33,8 +33,10 @@ class ClauseDataBase(object):
         foundSets = []
         for i, elem in enumerate(clause):
             if i + 1 > len(self.dictionaries):
+                '''
                 print('Warning: DataBase can only be indexed by tuples ' + \
                        'equal or less in length to the tuples it stores')
+               '''
                 return []
             if elem != '*':
                 foundSets.append(self.dictionaries[i][elem])

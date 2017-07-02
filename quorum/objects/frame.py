@@ -1,4 +1,4 @@
-from .multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
+from .multiclause    import MultiClause, expand_multiclause, create_multiclause, is_var
 from .multistatement import expand_multistatement, MultiStatement
 from .statement      import Statement
 
