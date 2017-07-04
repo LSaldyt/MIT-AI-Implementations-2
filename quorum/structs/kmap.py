@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 from ..objects.statement import Statement
 
@@ -38,7 +38,14 @@ class KnowledgeMap(object):
     def attrs(self, attr, clauses=None):
         if clauses is None:
             clauses = self.get('* * *')
-        return {getattr(c.clause, attr) for c in clauses}
+        if attr is None:
+            return clauses
+        if isinstance(attr, str):
+            return (getattr(c.clause, attr) for c in clauses)
+        elif isinstance(attr, tuple):
+            return (t for t in zip(*(self.attrs(a, clauses) for a in attr)))
+        else:
+            raise ValueError('Invalid attr {}'.format(attr))
 
     def teach(self, pattern):
         self.patternLibrary.teach(pattern)
@@ -50,25 +57,50 @@ class KnowledgeMap(object):
     def ask(self, t):
         raise NotImplementedError('Self explanatory')
 
-    def references(self, root, depth):
+    def references(self, root, depth=0, attr=None):
         assert depth >= 0
         result  = dict()
         clauses = set.union(
                     self.get('{} * *'.format(root)),
                     self.get('* * {}'.format(root)))
         names   = set.union(
-                    self.attrs('name', clauses),
-                    self.attrs('node', clauses))
-        names.discard(root)
+                    set(self.attrs('name', clauses)),
+                    set(self.attrs('node', clauses)))
         if depth == 0:
-            return names
+            return set(self.attrs(attr, clauses))
         else:
-            searches = [self.references(name, depth - 1) 
+            searches = [self.references(name, depth-1, attr=attr) 
                         for name in names]
-            return set.union(names, *searches)
+            result = set.union(names, *searches)
+            return result
 
-    def reference_dict(self, root, depth):
+    def reference_dict(self, root, depth=0):
         result = dict()
         for i in range(depth):
             result[i] = self.references(root, i)
         return result
+
+    def build_classifier(self, classname, query='* isa {}'):
+        query    = query.format(classname)
+        examples = self.get(query)
+        names    = set(self.attrs('name', examples))
+        refs     = [self.references(name, attr=('relation', 'node')) for name in names]
+        refs     = [item for s in refs for item in s]
+
+        matches = Counter()
+        matches.update(refs)
+        print('matches')
+        print(matches)
+        nonExclusive = Counter()
+
+        for ref in refs:
+            refclauses = self.get('* {} {}'.format(*ref))
+            refnames   = self.attrs('name', refclauses)
+            for name in refnames:
+                if name not in names:
+                    nonExclusive[ref] += 1
+        print('non exclusive counter')
+        print(nonExclusive)
+        print('Classification:')
+        classifyCounter = matches - nonExclusive
+        print(classifyCounter)
