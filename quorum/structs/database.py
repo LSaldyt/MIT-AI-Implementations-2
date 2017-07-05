@@ -14,12 +14,7 @@ class DataBase(object):
         self.names      = set()
 
     def __str__(self):
-        chainDictStr = '{}'.format(
-                str(list(self.chainDicts.items()))
-                )
-        return '{}\n{}'.format(
-                self.clauseDataBase,
-                chainDictStr)
+        return str(self.clauseDataBase)
 
     def clauses(self):
         return self.clauseDataBase.clauses()

@@ -2,6 +2,7 @@
 from quorum import KnowledgeMap
 from quorum.objects import Statement, Pattern
 from quorum.parse import parse_text
+from quorum.parse import parse_file
 
 def main(args):
     kmap = KnowledgeMap()
@@ -18,3 +19,10 @@ def main(args):
     kmap.add('parrot isa bird')
     kmap.add('parrot can talk')
     kmap.build_classifier('bird')
+
+    kmap = parse_file('data/cup.txt')
+    print(kmap)
+    print(kmap.patternLibrary)
+    kmap.infer()
+    kmap.build_classifier('cup')
+

@@ -29,6 +29,9 @@ class Statement(object):
             return self.clause._asdict()[key]
         return self.clause[key]
 
+    def __len__(self):
+        return 1 + len(self.chained)
+
     def fields(self):
         return list(self.clause) + [clause for s in self.chained.values() for clause in s]
 

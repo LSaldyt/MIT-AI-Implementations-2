@@ -19,8 +19,8 @@ class Pattern(object):
                 '\n    '.join(map(str, self.inferred)))
 
     def get_inferences(self, database):
-        frame.fill_variables(database)
-        variables = frame.variables
+        self.frame.fill_variables(database)
+        variables = self.frame.variables
         for eclause in self.inferred:
             try:
                 mc  = create_multiclause(eclause.clause, variables)

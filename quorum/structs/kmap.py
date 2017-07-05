@@ -15,7 +15,7 @@ class KnowledgeMap(object):
         self.patternLibrary = PatternLibrary()
 
     def __str__(self):
-        return 'KnowledgeMap'
+        return 'KnowledgeMap:\n' + str(self.database)
 
     def add(self, ec):
         if isinstance(ec, str):
@@ -52,6 +52,7 @@ class KnowledgeMap(object):
 
     def infer(self):
         for item in self.patternLibrary.get_inferences(self.database):
+            print(item)
             self.add(item)
 
     def ask(self, t):

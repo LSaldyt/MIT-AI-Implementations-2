@@ -1,7 +1,7 @@
 from collections import namedtuple, defaultdict
 
 from .clause        import Clause
-from .multiclause   import MultiClause, expand_multiclause, expand_multiclause
+from .multiclause   import MultiClause, expand_multiclause, expand_multiclauses
 from .statement import Statement
 
 from ..tools.subsets import subsets
@@ -16,8 +16,11 @@ def expand_multistatement(mec):
     for root in roots:
         kvs = []
         for k, chainClauses in expandedChainDict.items():
-            for subset in expand_multiclause(chainClauses):
+            for subset in expand_multiclauses(chainClauses):
                 for item in subset:
                     kvs.append((k, set(item)))
+        allowEmpty = len(kvs) == 0
         for subset in subsets(kvs):
+            if len(subset) == 0 and not allowEmpty:
+                continue
             yield Statement(root, dict(subset))
