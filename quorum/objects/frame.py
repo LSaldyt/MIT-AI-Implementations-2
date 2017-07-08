@@ -1,3 +1,4 @@
+from .clause         import Clause
 from .multiclause    import MultiClause, expand_multiclause, create_multiclause, is_var
 from .multistatement import expand_multistatement, MultiStatement
 from .statement      import Statement
@@ -11,26 +12,14 @@ class Frame(object):
     def __init__(self, slots):
         self.slots     = slots 
         self.variables = defaultdict(list)
-        self.locks     = defaultdict(lambda : False)
+        self.seen      = set()
 
     def __str__(self):
         return '\n    '.join(map(str, self.slots))
 
-    def process(self, field):
-        if '@' in field:
-            if field in self.variables:
-                return self.variables[field]
-            else:
-                return ['*']
-        else:
-            return [field]
-
-    def create_multiclause(self, clause):
-        return MultiClause(*tuple(self.process(field) for field in clause))
-
     def to_queries(self, eclause):
-        mc        = self.create_multiclause(eclause.clause)
-        chainDict = {k : self.create_multiclause(c) for k, vs in eclause.chained.items() for c in vs}
+        mc        = create_multiclause(eclause.clause, self.variables)
+        chainDict = {k : create_multiclause(c, self.variables) for k, c in eclause.chained_items()}
         mec       = MultiStatement(mc, chainDict)
         return expand_multistatement(mec)
 
@@ -41,21 +30,27 @@ class Frame(object):
 
     def add_variables(self, fields):
         for cfield, mfield in fields:
-            if is_var(cfield) and not self.locks[cfield]:
+            if is_var(cfield) and cfield not in self.seen:
                 self.variables[cfield].append(mfield)
+                self.seen.add(cfield)
+            elif cfield in self.seen:
+                assert mfield in self.variables[cfield]
+
 
     def fill_variables(self, database):
         for predicate in sorted(self.slots, key = lambda s : len(s), reverse=True):
+            print('predicate:')
+            print('    {}'.format(predicate))
             for query in self.to_queries(predicate):
+                print('query:')
+                print('    {}'.format(query))
                 matches = database.get(query)
-                print(query)
-                #print(matches)
+                print('result:')
                 for match in matches:
                     self.add_variables(zip(predicate.clause, match.clause))
                     if self.compare_chains(predicate.chained, match.chained):
                         for (k1, v1), (k2, v2) in zip(predicate.chained_items(), match.chained_items()):
                             self.add_variables(zip(v1, v2))
-            for key in self.variables:
-                self.locks[key] = True 
+                    self.seen.clear()
         pprint(self.variables)
 

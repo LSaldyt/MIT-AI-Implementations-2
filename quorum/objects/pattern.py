@@ -22,11 +22,8 @@ class Pattern(object):
         self.frame.fill_variables(database)
         variables = self.frame.variables
         for eclause in self.inferred:
-            try:
-                mc  = create_multiclause(eclause.clause, variables)
-                chainDict = {k : create_multiclause(c, variables) for k, vs in eclause.chained.items() for c in vs}
-                mec = MultiStatement(mc, chainDict)
-                for clause in expand_multistatement(mec):
-                    yield clause
-            except KeyError:
-                pass
+            mc  = create_multiclause(eclause.clause, variables)
+            chainDict = {k : create_multiclause(c, variables) for k, vs in eclause.chained.items() for c in vs}
+            mec = MultiStatement(mc, chainDict)
+            for clause in expand_multistatement(mec):
+                yield clause

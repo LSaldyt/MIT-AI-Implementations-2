@@ -9,8 +9,9 @@ from ..tools.subsets import subsets
 MultiStatement = namedtuple('MultiStatement', ['root', 'chaindict'])
 
 def expand_multistatement(mec):
-    roots = expand_multiclause(mec.root)
+    roots             = expand_multiclause(mec.root)
     expandedChainDict = defaultdict(list)
+
     for k, v in mec.chaindict.items():
         expandedChainDict[k].append(v)
     for root in roots:
@@ -19,8 +20,8 @@ def expand_multistatement(mec):
             for subset in expand_multiclauses(chainClauses):
                 for item in subset:
                     kvs.append((k, set(item)))
-        allowEmpty = len(kvs) == 0
+        if len(kvs) == 0:
+            yield Statement(root, dict())
         for subset in subsets(kvs):
-            if len(subset) == 0 and not allowEmpty:
-                continue
-            yield Statement(root, dict(subset))
+            if len(subset) > 0:
+                yield Statement(root, dict(subset))
