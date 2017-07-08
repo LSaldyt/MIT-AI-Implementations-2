@@ -36,6 +36,33 @@ class Frame(object):
             elif cfield in self.seen:
                 assert mfield in self.variables[cfield]
 
+    def filter(self, matches, predicate):
+        for match in matches:
+            passes = True
+            varDict = dict()
+            def check(k, v):
+                if k in varDict:
+                    return v == varDict[k]
+                else:
+                    varDict[k] = v
+                    return True
+
+            for pfield, mfield in zip(predicate, match):
+                if not check(pfield, mfield):
+                    passes = False
+                    break
+            for (pk, pv), (mk, mv) in zip(
+                    sorted(predicate.chained_items()),
+                    sorted(match.chained_items())):
+                if not passes:
+                    break
+                for pfield, mfield in zip(pv, mv):
+                    if not check(pfield, mfield):
+                        passes = False
+                        pass
+            if passes:
+                yield match
+
 
     def fill_variables(self, database):
         for predicate in sorted(self.slots, key = lambda s : len(s), reverse=True):
@@ -46,7 +73,8 @@ class Frame(object):
                 print('    {}'.format(query))
                 matches = database.get(query)
                 print('result:')
-                for match in matches:
+                pprint(matches)
+                for match in self.filter(matches, predicate):
                     self.add_variables(zip(predicate.clause, match.clause))
                     if self.compare_chains(predicate.chained, match.chained):
                         for (k1, v1), (k2, v2) in zip(predicate.chained_items(), match.chained_items()):
