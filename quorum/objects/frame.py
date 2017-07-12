@@ -10,19 +10,57 @@ from pprint import pprint
 
 class Frame(object):
     def __init__(self, slots):
+        self.slots = slots
+        self.variables = dict()
+
+        for slot in self.slots:
+            for field in slot.fields():
+                if is_var(field):
+                    self.variables[field] = None
+
+    def __str__(self):
+        return '\n    '.join(map(str, self.slots))
+
+    def process_field(self, string):
+        if is_var(string):
+            assert string in self.variables
+            value = self.variables[string]
+            if value is None:
+                return '*'
+            else:
+                return value
+        else:
+            return string
+
+    def process_field_list(self, fieldList):
+        return ' '.join(self.process_field(field) for field in fieldList)
+
+    def to_search(self, statement):
+        statementDict = defaultdict(set)
+        clause = self.process_field_list(list(statement))
+        for k, fieldList in statement.chained_items():
+            statementDict[k].add(self.process_field_list(fieldList))
+        return Statement(clause, statementDict)
+
+    def fill_from(self, database):
+        for statement in self.slots:
+            matches = database.get(self.to_search(statement))
+            pprint(matches)
+            #for query in self.to_queries(statement):
+            #matches = database.get(query)
+            #print(matches)
+        1/0
+
+
+'''
+class Frame(object):
+    def __init__(self, slots):
         self.slots     = slots 
         self.variables = defaultdict(list)
         self.seen      = set()
         self.locks     = defaultdict(lambda : False)
 
-    def __str__(self):
-        return '\n    '.join(map(str, self.slots))
 
-    def to_queries(self, eclause):
-        mc        = create_multiclause(eclause.clause, self.variables)
-        chainDict = {k : create_multiclause(c, self.variables) for k, c in eclause.chained_items()}
-        mec       = MultiStatement(mc, chainDict)
-        return expand_multistatement(mec)
 
     def compare_chains(self, a, b):
         if len(a.keys()) == 0:
@@ -72,7 +110,6 @@ class Frame(object):
             if passes:
                 yield match
 
-
     def fill_variables(self, database):
         for predicate in sorted(self.slots, key = lambda s : len(s), reverse=True):
             print('predicate:')
@@ -95,4 +132,4 @@ class Frame(object):
             for k in self.variables:
                 self.locks[k] = True
         pprint(self.variables)
-
+'''

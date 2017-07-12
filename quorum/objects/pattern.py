@@ -19,7 +19,7 @@ class Pattern(object):
                 '\n    '.join(map(str, self.inferred)))
 
     def get_inferences(self, database):
-        self.frame.fill_variables(database)
+        self.frame.fill_from(database)
         for statement in self.inferred:
             print(statement)
             for statement in expand_from_vars(statement, self.frame.variables):
