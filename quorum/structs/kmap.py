@@ -52,6 +52,7 @@ class KnowledgeMap(object):
 
     def infer(self):
         for item in self.patternLibrary.get_inferences(self.database):
+            print('inferred:')
             print(item)
             self.add(item)
 

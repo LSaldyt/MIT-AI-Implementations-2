@@ -2,6 +2,7 @@ from collections  import namedtuple
 
 from .clause import Clause
 
+
 class Statement(object):
     def __init__(self, clause, chained=None):
         if chained is None:

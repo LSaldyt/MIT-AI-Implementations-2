@@ -18,7 +18,7 @@ def expand_multiclauses(mcs):
     expanded = [expand_multiclause(mc) for mc in mcs]
     return subsets(expanded)
 
-def create_multiclause(clause, variables):
+def create_multiclause(clause, variables, insertStar=True):
     mc = MultiClause([], [], [])
     l = 1
     for i, field in enumerate(clause):
@@ -29,7 +29,11 @@ def create_multiclause(clause, variables):
                 for val in fieldvals:
                     mc[i].append(val)
             else:
-                mc[i].append('*')
+                print('{} not in variables'.format(field))
+                if insertStar:
+                    mc[i].append('*')
+                else:
+                    raise ValueError()
         else:
             mc[i].append(field)
     for i in range(len(clause)):

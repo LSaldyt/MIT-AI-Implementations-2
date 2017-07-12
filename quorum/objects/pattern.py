@@ -1,5 +1,5 @@
 from .multiclause        import MultiClause, expand_multiclause, create_multiclause, is_var
-from .multistatement import expand_multistatement, MultiStatement
+from .multistatement import expand_multistatement, MultiStatement, expand_from_vars
 from .statement      import Statement
 
 from ..tools.common_entries import common_entries
@@ -20,10 +20,7 @@ class Pattern(object):
 
     def get_inferences(self, database):
         self.frame.fill_variables(database)
-        variables = self.frame.variables
-        for eclause in self.inferred:
-            mc  = create_multiclause(eclause.clause, variables)
-            chainDict = {k : create_multiclause(c, variables) for k, vs in eclause.chained.items() for c in vs}
-            mec = MultiStatement(mc, chainDict)
-            for clause in expand_multistatement(mec):
-                yield clause
+        for statement in self.inferred:
+            print(statement)
+            for statement in expand_from_vars(statement, self.frame.variables):
+                yield statement

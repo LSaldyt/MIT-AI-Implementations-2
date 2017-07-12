@@ -1,6 +1,6 @@
 from .clause         import Clause
 from .multiclause    import MultiClause, expand_multiclause, create_multiclause, is_var
-from .multistatement import expand_multistatement, MultiStatement
+from .multistatement import expand_multistatement, MultiStatement, expand_from_vars
 from .statement      import Statement
 
 from ..tools.common_entries import common_entries
@@ -13,6 +13,7 @@ class Frame(object):
         self.slots     = slots 
         self.variables = defaultdict(list)
         self.seen      = set()
+        self.locks     = defaultdict(lambda : False)
 
     def __str__(self):
         return '\n    '.join(map(str, self.slots))
@@ -41,11 +42,19 @@ class Frame(object):
             passes = True
             varDict = dict()
             def check(k, v):
+                if k in self.variables:
+                    if self.locks[k]:
+                        a = v in self.variables[k]
+                    else:
+                        a = True
+                else:
+                    a = True
                 if k in varDict:
-                    return v == varDict[k]
+                    b = v == varDict[k]
                 else:
                     varDict[k] = v
-                    return True
+                    b = True
+                return a and b
 
             for pfield, mfield in zip(predicate, match):
                 if not check(pfield, mfield):
@@ -68,17 +77,22 @@ class Frame(object):
         for predicate in sorted(self.slots, key = lambda s : len(s), reverse=True):
             print('predicate:')
             print('    {}'.format(predicate))
-            for query in self.to_queries(predicate):
+            for query in expand_from_vars(predicate, self.variables):
+                #for query in self.to_queries(predicate):
                 print('query:')
                 print('    {}'.format(query))
                 matches = database.get(query)
                 print('result:')
                 pprint(matches)
                 for match in self.filter(matches, predicate):
+                    print('filtered match:')
+                    print('        {}'.format(match))
                     self.add_variables(zip(predicate.clause, match.clause))
                     if self.compare_chains(predicate.chained, match.chained):
                         for (k1, v1), (k2, v2) in zip(predicate.chained_items(), match.chained_items()):
                             self.add_variables(zip(v1, v2))
                     self.seen.clear()
+            for k in self.variables:
+                self.locks[k] = True
         pprint(self.variables)
 

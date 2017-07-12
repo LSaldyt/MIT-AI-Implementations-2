@@ -1,7 +1,7 @@
 from collections import namedtuple, defaultdict
 
 from .clause        import Clause
-from .multiclause   import MultiClause, expand_multiclause, expand_multiclauses
+from .multiclause   import MultiClause, expand_multiclause, expand_multiclauses, create_multiclause
 from .statement import Statement
 
 from ..tools.subsets import subsets
@@ -25,3 +25,9 @@ def expand_multistatement(mec):
         for subset in subsets(kvs):
             if len(subset) > 0:
                 yield Statement(root, dict(subset))
+
+def expand_from_vars(statement, variables):
+    mc        = create_multiclause(statement.clause, variables)
+    chainDict = {k : create_multiclause(c, variables) for k, c in statement.chained_items()}
+    mec       = MultiStatement(mc, chainDict)
+    return expand_multistatement(mec)
