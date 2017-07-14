@@ -4,9 +4,10 @@ from .statement      import Statement
 
 from ..tools.common_entries import common_entries
 
-from collections import defaultdict
-
 from .frame import Frame
+
+from collections import defaultdict
+from pprint      import pprint
 
 class Pattern(object):
     def __init__(self, predicates, inferred):
@@ -19,8 +20,8 @@ class Pattern(object):
                 '\n    '.join(map(str, self.inferred)))
 
     def get_inferences(self, database):
-        self.frame.fill_from(database)
+        frames = self.frame.fill_from(database)
+        #pprint(list(frames))
         for statement in self.inferred:
-            print(statement)
-            for statement in expand_from_vars(statement, self.frame.variables):
-                yield statement
+            for frame in frames:
+                yield frame.process_statement(statement)

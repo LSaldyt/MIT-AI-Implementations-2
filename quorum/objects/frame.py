@@ -4,13 +4,16 @@ from .multistatement import expand_multistatement, MultiStatement, expand_from_v
 from .statement      import Statement
 
 from ..tools.common_entries import common_entries
+from ..tools.flatten        import flatten
 
 from collections import defaultdict
-from pprint import pprint
+from pprint      import pprint
+from copy        import deepcopy
 
 class Frame(object):
     def __init__(self, slots):
         self.slots = slots
+        self.remaining = slots
         self.variables = dict()
 
         for slot in self.slots:
@@ -19,7 +22,12 @@ class Frame(object):
                     self.variables[field] = None
 
     def __str__(self):
-        return '\n    '.join(map(str, self.slots))
+        if len(self.remaining) > 0:
+            return '\n'.join(map(str, self.slots))
+        return str(self.variables)
+    
+    def __repr__(self):
+        return str(self)
 
     def process_field(self, string):
         if is_var(string):
@@ -35,101 +43,46 @@ class Frame(object):
     def process_field_list(self, fieldList):
         return ' '.join(self.process_field(field) for field in fieldList)
 
-    def to_search(self, statement):
+    def process_statement(self, statement):
         statementDict = defaultdict(set)
         clause = self.process_field_list(list(statement))
         for k, fieldList in statement.chained_items():
             statementDict[k].add(self.process_field_list(fieldList))
         return Statement(clause, statementDict)
 
+    def filter_statement(self, statement, match):
+        variables = dict()
+        for sfield, mfield in zip(statement.fields(), match.fields()):
+            if is_var(sfield):
+                if sfield in variables and mfield != variables[sfield]:
+                    return False
+                else:
+                    variables[sfield] = mfield
+            else:
+                if sfield != mfield:
+                    return False
+        print(variables)
+        return True
+
+    def fill_match(self, match, slot):
+        frame = deepcopy(self)
+        for mfield, sfield in zip(match.fields(), slot.fields()):
+            if is_var(sfield):
+                assert sfield in self.variables
+                frame.variables[sfield] = mfield
+        frame.remaining = frame.remaining[1:]
+        return frame
+
     def fill_from(self, database):
-        for statement in self.slots:
-            matches = database.get(self.to_search(statement))
+        if len(self.remaining) == 0:
+            return [self]
+        else:
+            first   = self.remaining[0]
+            query   = self.process_statement(first)
+            matches = database.get(query)
+            mathces = {match for match in matches if self.filter_statement(first, match)}
+            print(query)
             pprint(matches)
-            #for query in self.to_queries(statement):
-            #matches = database.get(query)
-            #print(matches)
-        1/0
-
-
-'''
-class Frame(object):
-    def __init__(self, slots):
-        self.slots     = slots 
-        self.variables = defaultdict(list)
-        self.seen      = set()
-        self.locks     = defaultdict(lambda : False)
-
-
-
-    def compare_chains(self, a, b):
-        if len(a.keys()) == 0:
-            return False
-        return sorted(list(a.keys())) == sorted(list(b.keys()))
-
-    def add_variables(self, fields):
-        for cfield, mfield in fields:
-            if is_var(cfield) and cfield not in self.seen:
-                self.variables[cfield].append(mfield)
-                self.seen.add(cfield)
-            elif cfield in self.seen:
-                assert mfield in self.variables[cfield]
-
-    def filter(self, matches, predicate):
-        for match in matches:
-            passes = True
-            varDict = dict()
-            def check(k, v):
-                if k in self.variables:
-                    if self.locks[k]:
-                        a = v in self.variables[k]
-                    else:
-                        a = True
-                else:
-                    a = True
-                if k in varDict:
-                    b = v == varDict[k]
-                else:
-                    varDict[k] = v
-                    b = True
-                return a and b
-
-            for pfield, mfield in zip(predicate, match):
-                if not check(pfield, mfield):
-                    passes = False
-                    break
-            for (pk, pv), (mk, mv) in zip(
-                    sorted(predicate.chained_items()),
-                    sorted(match.chained_items())):
-                if not passes:
-                    break
-                for pfield, mfield in zip(pv, mv):
-                    if not check(pfield, mfield):
-                        passes = False
-                        pass
-            if passes:
-                yield match
-
-    def fill_variables(self, database):
-        for predicate in sorted(self.slots, key = lambda s : len(s), reverse=True):
-            print('predicate:')
-            print('    {}'.format(predicate))
-            for query in expand_from_vars(predicate, self.variables):
-                #for query in self.to_queries(predicate):
-                print('query:')
-                print('    {}'.format(query))
-                matches = database.get(query)
-                print('result:')
-                pprint(matches)
-                for match in self.filter(matches, predicate):
-                    print('filtered match:')
-                    print('        {}'.format(match))
-                    self.add_variables(zip(predicate.clause, match.clause))
-                    if self.compare_chains(predicate.chained, match.chained):
-                        for (k1, v1), (k2, v2) in zip(predicate.chained_items(), match.chained_items()):
-                            self.add_variables(zip(v1, v2))
-                    self.seen.clear()
-            for k in self.variables:
-                self.locks[k] = True
-        pprint(self.variables)
-'''
+            frames  = [self.fill_match(m, first)   for m in matches]
+            frames  = [list(f.fill_from(database)) for f in frames]
+        return flatten(frames)

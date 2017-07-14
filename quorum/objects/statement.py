@@ -34,7 +34,7 @@ class Statement(object):
         return 1 + len(self.chained)
 
     def fields(self):
-        return list(self.clause) + [clause for s in self.chained.values() for clause in s]
+        return list(self.clause) + [field for s in self.chained.values() for clause in s for field in clause]
 
     def chained_items(self):
         return ((k, v) for k, vs in self.chained.items() for v in vs)
