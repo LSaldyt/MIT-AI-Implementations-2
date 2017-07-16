@@ -111,7 +111,13 @@ class KnowledgeMap(object):
         classifyCounter = matches - nonExclusive
         print(classifyCounter)
 
-    def shared_relations(self, a, b, depth=1):
-        print(self.references(a, depth, attr='relation'))
-        print(self.references(b, depth, attr='relation'))
+    def intersect(self, a, b, depth=1, attr='name'):
+        return set.intersection(
+                self.references(a, depth, attr=attr),
+                self.references(b, depth, attr=attr))
 
+    def shared(self, a, b, depth=1):
+        print('Shared properties of {} and {}'.format(a, b))
+        for attr in [('relation', 'node'), 'name', 'relation', 'node']:
+            print(attr)
+            print(self.intersect(a, b, depth, attr))

@@ -10,4 +10,16 @@ def main(args):
     terminals on-end-of battery.
     '''
     kmap = parse_text(info)
-    kmap.shared_relations('poles', 'terminals')
+    kmap.shared('poles', 'terminals')
+    info = '''
+    a is-a cup.
+    a is small.
+    b is-a cup.
+    b is large.
+    c is-a bowl.
+    c is small.
+    d is-a bowl.
+    d is large.
+    '''
+    kmap = parse_text(info)
+    kmap.shared('a', 'c')
