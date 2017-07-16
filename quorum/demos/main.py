@@ -23,3 +23,13 @@ def main(args):
     '''
     kmap = parse_text(info)
     kmap.shared('a', 'c')
+    info = '''
+    tuna is-a fish.
+    fish is-a animal.
+    labrador is-a dog.
+    dog is-a animal.
+    '''
+    kmap = parse_text(info)
+    kmap.shared('tuna', 'labrador', depth=0)
+    kmap.shared('tuna', 'labrador', depth=1)
+

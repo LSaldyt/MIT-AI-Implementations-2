@@ -117,7 +117,8 @@ class KnowledgeMap(object):
                 self.references(b, depth, attr=attr))
 
     def shared(self, a, b, depth=1):
-        print('Shared properties of {} and {}'.format(a, b))
+        print('Shared properties of {} and {} at depth {}'.format(a, b, depth))
         for attr in [('relation', 'node'), 'name', 'relation', 'node']:
-            print(attr)
-            print(self.intersect(a, b, depth, attr))
+            print('    {}'.format(attr))
+            for element in self.intersect(a, b, depth, attr):
+                print('      {}'.format(element))
