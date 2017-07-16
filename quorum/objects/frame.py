@@ -61,7 +61,6 @@ class Frame(object):
             else:
                 if sfield != mfield:
                     return False
-        print(variables)
         return True
 
     def fill_match(self, match, slot):
@@ -80,9 +79,7 @@ class Frame(object):
             first   = self.remaining[0]
             query   = self.process_statement(first)
             matches = database.get(query)
-            mathces = {match for match in matches if self.filter_statement(first, match)}
-            print(query)
-            pprint(matches)
+            matches = {match for match in matches if self.filter_statement(first, match)}
             frames  = [self.fill_match(m, first)   for m in matches]
             frames  = [list(f.fill_from(database)) for f in frames]
         return flatten(frames)

@@ -1,4 +1,9 @@
-from collections import defaultdict, Counter
+from collections import defaultdict, Counter, namedtuple
+
+SearchField = namedtuple('SearchField', ['query', 'name'])
+
+NameField = SearchField('{} * *', 'name')
+NodeField = SearchField('* * {}', 'node')
 
 from ..objects.statement import Statement
 
@@ -51,23 +56,24 @@ class KnowledgeMap(object):
         self.patternLibrary.teach(pattern)
 
     def infer(self):
+        print('inferring new statements from pattern library:')
         for item in self.patternLibrary.get_inferences(self.database):
             print('inferred:')
-            print(item)
+            print('    {}'.format(item))
             self.add(item)
 
     def ask(self, t):
         raise NotImplementedError('Self explanatory')
 
-    def references(self, root, depth=0, attr=None):
+    def references(self, root, depth=0, attr=None, searchFields=None):
         assert depth >= 0
+        if searchFields is None:
+            searchFields = [NameField, NodeField]
         result  = dict()
-        clauses = set.union(
-                    self.get('{} * *'.format(root)),
-                    self.get('* * {}'.format(root)))
-        names   = set.union(
-                    set(self.attrs('name', clauses)),
-                    set(self.attrs('node', clauses)))
+        clauses = set.union(*(self.get(sField.query.format(root))   
+                      for sField in searchFields))
+        names   = set.union(*(set(self.attrs(sField.name, clauses)) 
+                      for sField in searchFields))
         if depth == 0:
             return set(self.attrs(attr, clauses))
         else:

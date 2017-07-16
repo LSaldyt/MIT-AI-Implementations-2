@@ -23,7 +23,7 @@ def main(args):
     kmap = parse_file('data/cup.txt')
     print(kmap)
     print(kmap.patternLibrary)
-    #kmap.infer()
     kmap.infer()
-    kmap.build_classifier('cup')
+    kmap.infer()
+    kmap.build_classifier('drinking', query='* enables {}')
 
