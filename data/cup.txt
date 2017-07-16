@@ -14,3 +14,7 @@ cup enables drinking.
 object ismadeof porcelain.
 object hasa decoration.
 object hasa concavity.
+a rel b because c rel d.
+
+if @a @rel1 @b because @a @rel2 @d, @e @rel2 @d
+then @e @rel1 @b because @e @rel2 @d.

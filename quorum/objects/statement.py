@@ -2,7 +2,8 @@ from collections  import namedtuple
 
 from .clause import Clause
 
-class ChainClause(object):
+
+class Statement(object):
     def __init__(self, clause, chained=None):
         if chained is None:
             chained = dict()
@@ -29,8 +30,11 @@ class ChainClause(object):
             return self.clause._asdict()[key]
         return self.clause[key]
 
+    def __len__(self):
+        return 1 + len(self.chained)
+
     def fields(self):
-        return list(self.clause) + [clause for subclauses in self.chained.values() for clause in subclauses]
+        return list(self.clause) + [field for s in self.chained.values() for clause in s for field in clause]
 
     def chained_items(self):
         return ((k, v) for k, vs in self.chained.items() for v in vs)
