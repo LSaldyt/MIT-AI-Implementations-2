@@ -77,10 +77,8 @@ class KnowledgeMap(object):
         if depth == 0:
             return set(self.attrs(attr, clauses))
         else:
-            searches = [self.references(name, depth-1, attr=attr) 
-                        for name in names]
-            result = set.union(names, *searches)
-            return result
+            return set.union(*(self.references(name, depth-1, attr=attr, searchFields=searchFields) 
+                        for name in names))
 
     def reference_dict(self, root, depth=0):
         result = dict()
@@ -112,3 +110,8 @@ class KnowledgeMap(object):
         print('Classification:')
         classifyCounter = matches - nonExclusive
         print(classifyCounter)
+
+    def shared_relations(self, a, b, depth=1):
+        print(self.references(a, depth, attr='relation'))
+        print(self.references(b, depth, attr='relation'))
+
