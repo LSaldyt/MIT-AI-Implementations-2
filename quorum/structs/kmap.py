@@ -112,13 +112,35 @@ class KnowledgeMap(object):
         print(classifyCounter)
 
     def intersect(self, a, b, depth=1, attr='name'):
-        return set.intersection(
-                self.references(a, depth, attr=attr),
-                self.references(b, depth, attr=attr))
+        aref = self.references(a, depth, attr=attr)
+        bref = self.references(b, depth, attr=attr)
+        print('        Aref        {}'.format(aref))
+        print('        Bref        {}'.format(bref))
+        return set.intersection(aref, bref)
 
     def shared(self, a, b, depth=1):
+        properties = dict()
         print('Shared properties of {} and {} at depth {}'.format(a, b, depth))
         for attr in [('relation', 'node'), 'name', 'relation', 'node']:
             print('    {}'.format(attr))
-            for element in self.intersect(a, b, depth, attr):
+            elements = self.intersect(a, b, depth, attr) 
+            for element in elements:
                 print('      {}'.format(element))
+            properties[attr] = elements
+        return properties
+
+    def compare(self, a, *others, depth=0):
+        def diff_properties(pA, pB):
+            return {k : set.intersection(vA, vB) 
+                    for (k, vA), (_, vB) in zip(pA.items(), pB.items())}
+
+        print('What does a {} have in common with {} at depth {}?'.format(a, others, depth))
+        assert len(others) > 0
+        first = others[0]
+        pFirst = self.shared(a, first, depth)
+        for item in others[1:]:
+            pItem = self.shared(a, item, depth)
+            pCommon = diff_properties(pFirst, pItem)
+            print('Properties in common:')
+            print(pCommon)
+            pFirst = pCommon

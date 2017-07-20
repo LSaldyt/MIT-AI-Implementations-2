@@ -5,31 +5,17 @@ from quorum.parse import parse_text
 from quorum.parse import parse_file
 
 def main(args):
+
     info = '''
     poles on-end-of magnet.
     terminals on-end-of battery.
+    battery holds charge.
+    magnet attracts objects.
+    magnet repels objects.
+    acid inside-of battery.
     '''
     kmap = parse_text(info)
-    kmap.shared('poles', 'terminals')
-    info = '''
-    a is-a cup.
-    a is small.
-    b is-a cup.
-    b is large.
-    c is-a bowl.
-    c is small.
-    d is-a bowl.
-    d is large.
-    '''
-    kmap = parse_text(info)
-    kmap.shared('a', 'c')
-    info = '''
-    tuna is-a fish.
-    fish is-a animal.
-    labrador is-a dog.
-    dog is-a animal.
-    '''
-    kmap = parse_text(info)
-    kmap.shared('tuna', 'labrador', depth=0)
-    kmap.shared('tuna', 'labrador', depth=1)
-
+    #kmap.shared('poles', 'terminals')
+    kmap.compare('poles', 'terminals', 'acid')
+    kmap.compare('battery', 'poles', 'acid', 'terminals')
+    kmap.compare('battery', 'acid', 'terminals')
